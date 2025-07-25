@@ -13,16 +13,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,29 +28,13 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import io.github.skeptick.libres.compose.painterResource
 import io.github.terrakok.compose.Res
-import io.github.terrakok.compose.wizard.ApolloPlugin
-import io.github.terrakok.compose.wizard.BuildConfigPlugin
-import io.github.terrakok.compose.wizard.ComposeIcons
-import io.github.terrakok.compose.wizard.ImageLoader
-import io.github.terrakok.compose.wizard.KStore
-import io.github.terrakok.compose.wizard.Koin
-import io.github.terrakok.compose.wizard.KotlinxCoroutinesCore
-import io.github.terrakok.compose.wizard.KotlinxDateTime
-import io.github.terrakok.compose.wizard.KotlinxSerializationJson
-import io.github.terrakok.compose.wizard.KtorCore
-import io.github.terrakok.compose.wizard.LibresCompose
-import io.github.terrakok.compose.wizard.MultiplatformSettings
-import io.github.terrakok.compose.wizard.Napier
 import io.github.terrakok.compose.wizard.ProjectInfo
-import io.github.terrakok.compose.wizard.SQLDelightPlugin
-import io.github.terrakok.compose.wizard.Voyager
-import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
-import io.github.terrakok.compose.wizardAndroid.buildFiles
-
-val LocalShowVersions = compositionLocalOf { mutableStateOf(false) }
+import io.github.terrakok.compose.wizardAndroid.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
-fun App() = AppTheme {
+fun AndroidApp() = AppTheme {
     CompositionLocalProvider(
         LocalShowVersions provides mutableStateOf(false)
     ) {
@@ -74,7 +56,7 @@ fun App() = AppTheme {
                     Header()
                     Spacer(Modifier.size(20.dp))
 
-                    val default = ProjectInfo()
+                    val default = AndroidProjectInfo()
                     var projectNameState by remember { mutableStateOf(default.name) }
                     var projectIdState by remember { mutableStateOf(default.packageId) }
 
@@ -96,53 +78,66 @@ fun App() = AppTheme {
                     )
                     Spacer(Modifier.size(20.dp))
 
-                    val androidState = remember { mutableStateOf(true) }
-                    val iosState = remember { mutableStateOf(true) }
-                    val desktopState = remember { mutableStateOf(true) }
-                    val browserState = remember { mutableStateOf(true) }
-                    ComposeTargetGroup(androidState, iosState, desktopState, browserState)
-                    Spacer(Modifier.size(20.dp))
+                    VersionsTable(default)
 
-//                    VersionsTable(default)
-
-                    val deps = listOf(
-                        Napier to mutableStateOf(true),
-                        LibresCompose to mutableStateOf(true),
-                        Voyager to mutableStateOf(true),
-                        ImageLoader to mutableStateOf(true),
-                        KotlinxCoroutinesCore to mutableStateOf(true),
-                        BuildConfigPlugin to mutableStateOf(true),
-                        KtorCore to mutableStateOf(false),
-                        ComposeIcons to mutableStateOf(false),
-                        KotlinxSerializationJson to mutableStateOf(false),
-                        KotlinxDateTime to mutableStateOf(false),
-                        MultiplatformSettings to mutableStateOf(false),
-                        Koin to mutableStateOf(false),
-                        KStore to mutableStateOf(false),
-                        SQLDelightPlugin to mutableStateOf(false),
-                        ApolloPlugin to mutableStateOf(false),
+                    val androidDeps = listOf(
+                        androidxCoreKtx to mutableStateOf(true),
+                        junit to mutableStateOf(true),
+                        androidxJunit to mutableStateOf(true),
+                        espressoCore to mutableStateOf(true),
+                        lifecycleRuntimeKtx to mutableStateOf(true),
+                        activityCompose to mutableStateOf(true),
+                        composeBom to mutableStateOf(true),
+                        composeUi to mutableStateOf(true),
+                        composeUiGraphics to mutableStateOf(true),
+                        composeUiTooling to mutableStateOf(true),
+                        composeUiToolingPreview to mutableStateOf(true),
+                        composeUiTestManifest to mutableStateOf(true),
+                        composeUiTestJunit4 to mutableStateOf(true),
+                        material3 to mutableStateOf(true),
+                        materialIconsExtended to mutableStateOf(false),
+                        splashscreen to mutableStateOf(false),
+                        constraintLayoutCompose to mutableStateOf(false),
+                        multidex to mutableStateOf(false),
+                        navigationCompose to mutableStateOf(false),
+                        navigationRuntimeKtx to mutableStateOf(false),
+                        hiltNavigationCompose to mutableStateOf(false),
+                        pagingCompose to mutableStateOf(false),
+                        retrofit to mutableStateOf(false),
+                        gsonConverter to mutableStateOf(false),
+                        loggingInterceptor to mutableStateOf(false),
+                        gson to mutableStateOf(false),
+                        landscapistCoil to mutableStateOf(false),
+                        landscapistPlaceholder to mutableStateOf(false),
+                        landscapistAnimation to mutableStateOf(false),
+                        timber to mutableStateOf(false),
+                        roomRuntime to mutableStateOf(false),
+                        roomKtx to mutableStateOf(false),
+                        roomCompiler to mutableStateOf(false),
                     )
+
 
                     SimpleGrid(
                         modifier = Modifier,
                         columnWidth = 300.dp,
-                        itemCount = deps.size
+                        itemCount = androidDeps.size
                     ) {
-                        val (dep, state) = deps[it]
+                        val (dep, state) = androidDeps[it]
                         DependencyCard(dependency = dep, selected = state)
                     }
                     Spacer(Modifier.size(20.dp))
 
-                    val isAndroid by androidState
-                    val isIos by iosState
-                    val isDesktop by desktopState
-                    val isBrowser by browserState
 
-                    val isReady = (isAndroid || isIos || isDesktop || isBrowser)
-                            && projectNameState.isNotBlank() && projectIdState.isNotBlank()
+                    val scope = rememberCoroutineScope()
+                    val isReady = projectNameState.isNotBlank() && projectIdState.isNotBlank()
                     Button(
                         enabled = isReady,
-                        onClick = {}
+                        onClick = {
+                            scope.launch(Dispatchers.Default){
+                                val zipBytes = generateAndroidZip(default)
+                                saveZipFile(default.name, zipBytes)
+                            }
+                        }
                     ) {
                         Image(
                             painter = painterResource(Res.image.arrow_circle_down),
@@ -157,12 +152,3 @@ fun App() = AppTheme {
         }
     }
 }
-
-@Composable
-internal fun getContentColor() = LocalContentColor.current.copy(alpha = LocalContentAlpha.current)
-
-internal expect fun openUrl(url: String?)
-
-expect fun saveZipFile(name: String, bytes: ByteArray)
-
-expect fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray

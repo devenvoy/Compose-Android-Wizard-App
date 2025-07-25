@@ -2,10 +2,11 @@ package io.github.terrakok.compose.ui
 
 import android.app.Application
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.net.toUri
+import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
 
 class AndroidApp : Application() {
     companion object {
@@ -26,11 +27,18 @@ class AppActivity : ComponentActivity() {
 }
 
 internal actual fun openUrl(url: String?) {
-    val uri = url?.let { Uri.parse(it) } ?: return
+    val uri = url?.let { it.toUri() } ?: return
     val intent = Intent().apply {
         action = Intent.ACTION_VIEW
         data = uri
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
     AndroidApp.INSTANCE.startActivity(intent)
+}
+
+actual fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
+    return ByteArray(10)
+}
+
+actual fun saveZipFile(name: String, bytes: ByteArray) {
 }

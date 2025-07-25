@@ -1,10 +1,10 @@
-import io.github.terrakok.compose.ui.App
+import io.github.terrakok.compose.ui.AndroidApp
 import org.jetbrains.skiko.wasm.onWasmReady
 
 fun main() {
     onWasmReady {
-        BrowserViewportWindow("Compose Multiplatform Wizard") {
-            App()
+        BrowserViewportWindow("Android Compose App Wizard") {
+            AndroidApp()
         }
     }
 }

@@ -15,10 +15,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.terrakok.compose.wizard.ProjectInfo
+import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
 
 @Composable
-fun VersionsTable(info: ProjectInfo) {
+fun VersionsTable(info: AndroidProjectInfo) {
     val isShowVersions by LocalShowVersions.current
     if (isShowVersions)
         Card(

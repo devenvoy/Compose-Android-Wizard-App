@@ -47,7 +47,7 @@ fun AppTheme(
         LocalThemeIsDark provides mutableStateOf(isSystemInDarkTheme())
     ) {
         val isDark by LocalThemeIsDark.current
-        val colors = if (!isDark) LightColors else DarkColors
+        val colors = /*if (!isDark) LightColors else*/ DarkColors
 
         MaterialTheme(
             colors = colors,

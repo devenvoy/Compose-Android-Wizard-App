@@ -74,6 +74,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(compose.web.core)
+                implementation(npm("fflate", "0.7.4"))
             }
         }
 
