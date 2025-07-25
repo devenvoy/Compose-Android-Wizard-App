@@ -1,7 +1,7 @@
 package io.github.terrakok.compose.wizardAndroid.files
 
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
-import io.github.terrakok.compose.wizardAndroid.ProjectFile
+import io.github.terrakok.compose.wizard.ProjectFile
 
 class GradleWrapperProperties(info: AndroidProjectInfo) : ProjectFile {
     override val path = "gradle/wrapper/gradle-wrapper.properties"

@@ -2,7 +2,7 @@ package io.github.terrakok.compose.wizardAndroid.files.app
 
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
 import io.github.terrakok.compose.wizardAndroid.HiltGroup
-import io.github.terrakok.compose.wizardAndroid.ProjectFile
+import io.github.terrakok.compose.wizard.ProjectFile
 
 class AndroidAppKt(info: AndroidProjectInfo) : ProjectFile {
     override val path = "app/src/main/java/${info.packagePath}/App.kt"

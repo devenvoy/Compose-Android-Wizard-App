@@ -15,7 +15,7 @@ import io.github.skeptick.libres.compose.painterResource
 import io.github.terrakok.compose.Res
 
 @Composable
-fun Header(modifier: Modifier = Modifier) {
+fun Header(modifier: Modifier = Modifier, text: String = "Compose Multiplatform Wizard") {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
@@ -28,7 +28,7 @@ fun Header(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.size(20.dp))
         Text(
-            text = "Compose Multiplatform Wizard",
+            text = text,
             style = MaterialTheme.typography.h3,
             modifier = Modifier.align(Alignment.CenterVertically)
         )

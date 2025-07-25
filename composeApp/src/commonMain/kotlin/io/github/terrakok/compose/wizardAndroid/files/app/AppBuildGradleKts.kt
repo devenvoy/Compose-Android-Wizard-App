@@ -2,7 +2,7 @@ package io.github.terrakok.compose.wizardAndroid.files.app
 
 import io.github.terrakok.compose.wizardAndroid.AndroidDependency
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
-import io.github.terrakok.compose.wizardAndroid.ProjectFile
+import io.github.terrakok.compose.wizard.ProjectFile
 import io.github.terrakok.compose.wizardAndroid.compilerNotation
 import io.github.terrakok.compose.wizardAndroid.libraryNotation
 import io.github.terrakok.compose.wizardAndroid.packageNotation

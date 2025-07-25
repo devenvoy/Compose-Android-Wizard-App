@@ -1,8 +1,10 @@
 package io.github.terrakok.compose.ui
 
 
+import io.github.terrakok.compose.wizard.ProjectFile
+import io.github.terrakok.compose.wizard.ProjectInfo
+import io.github.terrakok.compose.wizard.buildFiles
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
-import io.github.terrakok.compose.wizardAndroid.ProjectFile
 import io.github.terrakok.compose.wizardAndroid.buildFiles
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -51,7 +53,7 @@ external class JSZip {
     }
 }
 
-suspend fun generateZip(files: List<ProjectFile>): ByteArray {
+suspend fun generateProjectZip(files: List<ProjectFile>): ByteArray {
     val zip = JSZip()
     files.forEach { zip.file(it.path, it.content) }
 
@@ -66,5 +68,9 @@ suspend fun generateZip(files: List<ProjectFile>): ByteArray {
 
 @OptIn(ExperimentalCoroutinesApi::class)
 actual suspend fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
-    return generateZip(projectInfo.buildFiles())
+    return generateProjectZip(projectInfo.buildFiles())
+}
+
+actual suspend fun generateZip(projectInfo: ProjectInfo): ByteArray {
+    return generateProjectZip(projectInfo.buildFiles())
 }

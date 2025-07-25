@@ -1,8 +1,6 @@
 package io.github.terrakok.compose.wizardAndroid.files
 
-import io.github.terrakok.compose.wizardAndroid.ProjectFile
-import io.github.terrakok.compose.wizard.ProjectInfo
-import io.github.terrakok.compose.wizard.safeName
+import io.github.terrakok.compose.wizard.ProjectFile
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
 
 class SettingsGradleKts(info: AndroidProjectInfo) : ProjectFile {

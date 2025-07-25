@@ -1,5 +1,6 @@
 package io.github.terrakok.compose.ui
 
+import io.github.terrakok.compose.wizard.ProjectInfo
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
@@ -14,4 +15,8 @@ actual suspend fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArra
 }
 
 actual fun saveZipFile(name: String, bytes: ByteArray) {
+}
+
+actual suspend fun generateZip(projectInfo: ProjectInfo): ByteArray {
+    return ByteArray(10)
 }

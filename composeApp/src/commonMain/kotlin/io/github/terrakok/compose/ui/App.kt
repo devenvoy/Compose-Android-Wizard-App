@@ -1,6 +1,7 @@
 package io.github.terrakok.compose.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,113 +49,236 @@ import io.github.terrakok.compose.wizard.ProjectInfo
 import io.github.terrakok.compose.wizard.SQLDelightPlugin
 import io.github.terrakok.compose.wizard.Voyager
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
-import io.github.terrakok.compose.wizardAndroid.buildFiles
+import io.github.terrakok.compose.wizardAndroid.ComposeUIGroup
+import io.github.terrakok.compose.wizardAndroid.CoreGroup
+import io.github.terrakok.compose.wizardAndroid.HiltGroup
+import io.github.terrakok.compose.wizardAndroid.LandscapistGroup
+import io.github.terrakok.compose.wizardAndroid.LoggingGroup
+import io.github.terrakok.compose.wizardAndroid.MaterialAndSplashGroup
+import io.github.terrakok.compose.wizardAndroid.MultidexConstraintGroup
+import io.github.terrakok.compose.wizardAndroid.NavigationGroup
+import io.github.terrakok.compose.wizardAndroid.PagingGroup
+import io.github.terrakok.compose.wizardAndroid.RetrofitGroup
+import io.github.terrakok.compose.wizardAndroid.RoomDBGroup
+import io.github.terrakok.compose.wizardAndroid.TestGroup
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 val LocalShowVersions = compositionLocalOf { mutableStateOf(false) }
 
 @Composable
-fun App() = AppTheme {
-    CompositionLocalProvider(
-        LocalShowVersions provides mutableStateOf(false)
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+fun App() {
+    val systemTheme = isSystemInDarkTheme()
+    val isDark = remember { mutableStateOf(systemTheme) }
+    val isMultiplatform = remember { mutableStateOf(true) }
+
+    AppTheme(isDark) {
+        CompositionLocalProvider(
+            LocalShowVersions provides mutableStateOf(false)
         ) {
-            Card(
-                modifier = Modifier
-                    .padding(40.dp)
-                    .align(Alignment.Center)
-                    .width(1080.dp)
-                    .requiredWidthIn(min = 580.dp)
+            Box(
+                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
             ) {
-                TopMenu()
-                Column(
-                    modifier = Modifier.padding(40.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Card(
+                    modifier = Modifier
+                        .padding(40.dp)
+                        .align(Alignment.Center)
+                        .width(1080.dp)
+                        .requiredWidthIn(min = 580.dp)
                 ) {
-                    Header()
-                    Spacer(Modifier.size(20.dp))
+                    TopMenu(isDark = isDark, isMultiplatform = isMultiplatform)
 
-                    val default = ProjectInfo()
-                    var projectNameState by remember { mutableStateOf(default.name) }
-                    var projectIdState by remember { mutableStateOf(default.packageId) }
-
-                    OutlinedTextField(
-                        modifier = Modifier.width(480.dp),
-                        singleLine = true,
-                        value = projectNameState,
-                        onValueChange = { projectNameState = it },
-                        label = { Text("Project name") }
-                    )
-                    Spacer(Modifier.size(20.dp))
-
-                    OutlinedTextField(
-                        modifier = Modifier.width(480.dp),
-                        singleLine = true,
-                        value = projectIdState,
-                        onValueChange = { projectIdState = it },
-                        label = { Text("Project ID") }
-                    )
-                    Spacer(Modifier.size(20.dp))
-
-                    val androidState = remember { mutableStateOf(true) }
-                    val iosState = remember { mutableStateOf(true) }
-                    val desktopState = remember { mutableStateOf(true) }
-                    val browserState = remember { mutableStateOf(true) }
-                    ComposeTargetGroup(androidState, iosState, desktopState, browserState)
-                    Spacer(Modifier.size(20.dp))
-
-//                    VersionsTable(default)
-
-                    val deps = listOf(
-                        Napier to mutableStateOf(true),
-                        LibresCompose to mutableStateOf(true),
-                        Voyager to mutableStateOf(true),
-                        ImageLoader to mutableStateOf(true),
-                        KotlinxCoroutinesCore to mutableStateOf(true),
-                        BuildConfigPlugin to mutableStateOf(true),
-                        KtorCore to mutableStateOf(false),
-                        ComposeIcons to mutableStateOf(false),
-                        KotlinxSerializationJson to mutableStateOf(false),
-                        KotlinxDateTime to mutableStateOf(false),
-                        MultiplatformSettings to mutableStateOf(false),
-                        Koin to mutableStateOf(false),
-                        KStore to mutableStateOf(false),
-                        SQLDelightPlugin to mutableStateOf(false),
-                        ApolloPlugin to mutableStateOf(false),
-                    )
-
-                    SimpleGrid(
-                        modifier = Modifier,
-                        columnWidth = 300.dp,
-                        itemCount = deps.size
-                    ) {
-                        val (dep, state) = deps[it]
-                        DependencyCard(dependency = dep, selected = state)
-                    }
-                    Spacer(Modifier.size(20.dp))
-
-                    val isAndroid by androidState
-                    val isIos by iosState
-                    val isDesktop by desktopState
-                    val isBrowser by browserState
-
-                    val isReady = (isAndroid || isIos || isDesktop || isBrowser)
-                            && projectNameState.isNotBlank() && projectIdState.isNotBlank()
-                    Button(
-                        enabled = isReady,
-                        onClick = {}
-                    ) {
-                        Image(
-                            painter = painterResource(Res.image.arrow_circle_down),
-                            colorFilter = ColorFilter.tint(getContentColor()),
-                            contentDescription = null
-                        )
-                        Spacer(Modifier.size(10.dp))
-                        Text("Download")
+                    if (isMultiplatform.value) {
+                        ComposeMultiPlatformApp()
+                    } else {
+                        AndroidPlatformApp()
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ComposeMultiPlatformApp() {
+    Column(
+        modifier = Modifier.padding(40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Header()
+        Spacer(Modifier.size(20.dp))
+
+        val default = ProjectInfo()
+        var projectNameState by remember { mutableStateOf(default.name) }
+        var projectIdState by remember { mutableStateOf(default.packageId) }
+
+        OutlinedTextField(
+            modifier = Modifier.width(480.dp),
+            singleLine = true,
+            value = projectNameState,
+            onValueChange = { projectNameState = it },
+            label = { Text("Project name") }
+        )
+        Spacer(Modifier.size(20.dp))
+
+        OutlinedTextField(
+            modifier = Modifier.width(480.dp),
+            singleLine = true,
+            value = projectIdState,
+            onValueChange = { projectIdState = it },
+            label = { Text("Project ID") }
+        )
+        Spacer(Modifier.size(20.dp))
+
+        val androidState = remember { mutableStateOf(true) }
+        val iosState = remember { mutableStateOf(true) }
+        val desktopState = remember { mutableStateOf(true) }
+        val browserState = remember { mutableStateOf(true) }
+        ComposeTargetGroup(androidState, iosState, desktopState, browserState)
+        Spacer(Modifier.size(20.dp))
+
+//                    VersionsTable(default)
+
+        val deps = listOf(
+            Napier to mutableStateOf(true),
+            LibresCompose to mutableStateOf(true),
+            Voyager to mutableStateOf(true),
+            ImageLoader to mutableStateOf(true),
+            KotlinxCoroutinesCore to mutableStateOf(true),
+            BuildConfigPlugin to mutableStateOf(true),
+            KtorCore to mutableStateOf(false),
+            ComposeIcons to mutableStateOf(false),
+            KotlinxSerializationJson to mutableStateOf(false),
+            KotlinxDateTime to mutableStateOf(false),
+            MultiplatformSettings to mutableStateOf(false),
+            Koin to mutableStateOf(false),
+            KStore to mutableStateOf(false),
+            SQLDelightPlugin to mutableStateOf(false),
+            ApolloPlugin to mutableStateOf(false),
+        )
+
+        SimpleGrid(
+            modifier = Modifier,
+            columnWidth = 300.dp,
+            itemCount = deps.size
+        ) {
+            val (dep, state) = deps[it]
+            DependencyCard(dependency = dep, selected = state)
+        }
+        Spacer(Modifier.size(20.dp))
+
+        val isAndroid by androidState
+        val isIos by iosState
+        val isDesktop by desktopState
+        val isBrowser by browserState
+
+        val scope = rememberCoroutineScope()
+        val isReady = (isAndroid || isIos || isDesktop || isBrowser)
+                && projectNameState.isNotBlank() && projectIdState.isNotBlank()
+        Button(
+            enabled = isReady,
+            onClick = {
+                scope.launch(Dispatchers.Default) {
+                    val zipBytes =
+                        generateZip(default.copy(dependencies = deps.mapNotNull { if (it.second.value) it.first else null }
+                            .toSet()))
+                    saveZipFile(default.name, zipBytes)
+                }
+            }
+        ) {
+            Image(
+                painter = painterResource(Res.image.arrow_circle_down),
+                colorFilter = ColorFilter.tint(getContentColor()),
+                contentDescription = null
+            )
+            Spacer(Modifier.size(10.dp))
+            Text("Download")
+        }
+    }
+}
+
+@Composable
+fun AndroidPlatformApp() {
+    Column(
+        modifier = Modifier.padding(40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Header(text = "Android Template Wizard")
+        Spacer(Modifier.size(20.dp))
+
+        val default = AndroidProjectInfo()
+        var projectNameState by remember { mutableStateOf(default.name) }
+        var projectIdState by remember { mutableStateOf(default.packageId) }
+
+        OutlinedTextField(
+            modifier = Modifier.width(480.dp),
+            singleLine = true,
+            value = projectNameState,
+            onValueChange = { projectNameState = it },
+            label = { Text("Project name") }
+        )
+        Spacer(Modifier.size(20.dp))
+
+        OutlinedTextField(
+            modifier = Modifier.width(480.dp),
+            singleLine = true,
+            value = projectIdState,
+            onValueChange = { projectIdState = it },
+            label = { Text("Project ID") }
+        )
+        Spacer(Modifier.size(20.dp))
+
+        VersionsTable(default)
+
+        val androidDeps = listOf(
+            CoreGroup to mutableStateOf(true),
+            ComposeUIGroup to mutableStateOf(true),
+            MaterialAndSplashGroup to mutableStateOf(true),
+            NavigationGroup to mutableStateOf(true),
+            PagingGroup to mutableStateOf(true),
+            LoggingGroup to mutableStateOf(true),
+            MultidexConstraintGroup to mutableStateOf(true),
+            RoomDBGroup to mutableStateOf(true),
+            RetrofitGroup to mutableStateOf(true),
+            HiltGroup to mutableStateOf(true),
+            LandscapistGroup to mutableStateOf(true),
+            TestGroup to mutableStateOf(true)
+        )
+
+
+        SimpleGrid(
+            modifier = Modifier,
+            columnWidth = 300.dp,
+            itemCount = androidDeps.size
+        ) {
+            val (dep, state) = androidDeps[it]
+            DependencyCard(dependency = dep, selected = state)
+        }
+        Spacer(Modifier.size(20.dp))
+
+
+        val scope = rememberCoroutineScope()
+        val isReady = projectNameState.isNotBlank() && projectIdState.isNotBlank()
+        Button(
+            enabled = isReady,
+            onClick = {
+                scope.launch(Dispatchers.Default) {
+                    val zipBytes =
+                        generateAndroidZip(
+                            default.copy(
+                                dependencies = androidDeps.mapNotNull { if (it.second.value) it.first else null }
+                                    .toSet()))
+                    saveZipFile(default.name, zipBytes)
+                }
+            }
+        ) {
+            Image(
+                painter = painterResource(Res.image.arrow_circle_down),
+                colorFilter = ColorFilter.tint(getContentColor()),
+                contentDescription = null
+            )
+            Spacer(Modifier.size(10.dp))
+            Text("Download")
         }
     }
 }
@@ -166,3 +291,5 @@ internal expect fun openUrl(url: String?)
 expect fun saveZipFile(name: String, bytes: ByteArray)
 
 expect suspend fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray
+
+expect suspend fun generateZip(projectInfo: ProjectInfo): ByteArray

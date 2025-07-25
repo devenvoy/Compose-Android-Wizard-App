@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Switch
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -19,12 +21,19 @@ import io.github.skeptick.libres.compose.painterResource
 import io.github.terrakok.compose.Res
 
 @Composable
-fun TopMenu(modifier: Modifier = Modifier) {
+fun TopMenu(
+    modifier: Modifier = Modifier,
+    isDark: MutableState<Boolean>,
+    isMultiplatform: MutableState<Boolean>
+) {
     Row(
         modifier = modifier.fillMaxWidth().padding(10.dp),
         horizontalArrangement = Arrangement.End
     ) {
         var isShowVersions by LocalShowVersions.current
+
+        Switch(checked = isMultiplatform.value, onCheckedChange = { isMultiplatform.value = it })
+
         Image(
             modifier = Modifier
                 .padding(4.dp)
@@ -60,16 +69,15 @@ fun TopMenu(modifier: Modifier = Modifier) {
             colorFilter = ColorFilter.tint(getContentColor()),
             contentDescription = null
         )
-        var isDark by LocalThemeIsDark.current
         Image(
             modifier = Modifier
                 .padding(4.dp)
                 .size(40.dp)
                 .clip(CircleShape)
-                .clickable { isDark = !isDark }
+                .clickable { isDark.value = !isDark.value }
                 .padding(8.dp),
             painter = painterResource(
-                if (isDark) Res.image.light_mode else Res.image.dark_mode
+                if (isDark.value) Res.image.light_mode else Res.image.dark_mode
             ),
             colorFilter = ColorFilter.tint(getContentColor()),
             contentDescription = null

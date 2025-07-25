@@ -1,6 +1,6 @@
 package io.github.terrakok.compose.wizardAndroid.files.app
 
-import io.github.terrakok.compose.wizardAndroid.ProjectFile
+import io.github.terrakok.compose.wizard.ProjectFile
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
 
 class ThemeKt(info: AndroidProjectInfo) : ProjectFile {

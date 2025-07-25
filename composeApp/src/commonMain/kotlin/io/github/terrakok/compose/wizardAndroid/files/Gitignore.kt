@@ -1,6 +1,6 @@
 package io.github.terrakok.compose.wizardAndroid.files
 
-import io.github.terrakok.compose.wizardAndroid.ProjectFile
+import io.github.terrakok.compose.wizard.ProjectFile
 
 class Gitignore : ProjectFile {
     override val path = ".gitignore"

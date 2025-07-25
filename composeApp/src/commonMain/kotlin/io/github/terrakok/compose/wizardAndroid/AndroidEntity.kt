@@ -46,11 +46,6 @@ val AndroidDependency.pluginNotation get() = "alias(libs.plugins.$catalogAccesso
 val AndroidDependency.compilerNotation get() = "ksp(libs.$catalogAccessor)"
 val AndroidDependency.packageNotation get() = "implementation(platform(libs.$catalogAccessor))"
 
-interface ProjectFile {
-    val path: String
-    val content: String
-}
-
 
 data class GroupedAndroidDependency(
     val title: String,

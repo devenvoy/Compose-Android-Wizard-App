@@ -1,5 +1,6 @@
 package io.github.terrakok.compose.wizardAndroid
 
+import io.github.terrakok.compose.wizard.ProjectFile
 import io.github.terrakok.compose.wizardAndroid.files.Gitignore
 import io.github.terrakok.compose.wizardAndroid.files.GradleBat
 import io.github.terrakok.compose.wizardAndroid.files.GradleLibsVersion

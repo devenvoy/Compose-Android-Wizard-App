@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.net.toUri
+import io.github.terrakok.compose.wizard.ProjectInfo
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
 
 class AndroidApp : Application() {
@@ -41,4 +42,8 @@ actual suspend fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArra
 }
 
 actual fun saveZipFile(name: String, bytes: ByteArray) {
+}
+
+actual suspend fun generateZip(projectInfo: ProjectInfo): ByteArray {
+    return ByteArray(10)
 }
