@@ -43,7 +43,7 @@ class MainActivityKt(info: AndroidProjectInfo) : ProjectFile {
         import androidx.compose.runtime.Composable
         import androidx.compose.ui.Modifier
         import androidx.compose.ui.tooling.preview.Preview
-        import ${info.packageId}.ui.theme.AndroidAppTheme
+        import ${info.packageId}.ui.theme.${info.safeName}Theme
         ${if (info.dependencies.contains(HiltGroup)) "import dagger.hilt.android.AndroidEntryPoint" else ""}
         
         ${if (info.dependencies.contains(HiltGroup)) "@AndroidEntryPoint" else ""}        

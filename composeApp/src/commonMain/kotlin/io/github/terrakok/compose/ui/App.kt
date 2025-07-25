@@ -180,7 +180,11 @@ fun ComposeMultiPlatformApp() {
             onClick = {
                 scope.launch(Dispatchers.Default) {
                     val zipBytes =
-                        generateZip(default.copy(dependencies = deps.mapNotNull { if (it.second.value) it.first else null }
+                        generateZip(
+                            default.copy(
+                                name = projectNameState,
+                                packageId = projectIdState,
+                                dependencies = deps.mapNotNull { if (it.second.value) it.first else null }
                             .toSet()))
                     saveZipFile(default.name, zipBytes)
                 }
@@ -266,6 +270,8 @@ fun AndroidPlatformApp() {
                     val zipBytes =
                         generateAndroidZip(
                             default.copy(
+                                name = projectNameState,
+                                packageId = projectIdState,
                                 dependencies = androidDeps.mapNotNull { if (it.second.value) it.first else null }
                                     .toSet()))
                     saveZipFile(default.name, zipBytes)
