@@ -15,6 +15,7 @@ class RootBuildGradleKts(info: AndroidProjectInfo) : ProjectFile {
         appendLine("    alias(libs.plugins.android.application) apply false")
         appendLine("    alias(libs.plugins.kotlin.android) apply false")
         appendLine("    alias(libs.plugins.kotlin.compose) apply false")
+        appendLine("    id(\"com.google.devtools.ksp\") version \"2.2.0-2.0.2\" apply false")
 
         // Dynamically include plugin dependencies
         info.dependencies

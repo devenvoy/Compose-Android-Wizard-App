@@ -2,14 +2,18 @@ package io.github.terrakok.compose.ui
 
 
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
+import io.github.terrakok.compose.wizardAndroid.ProjectFile
+import io.github.terrakok.compose.wizardAndroid.buildFiles
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.await
+import org.khronos.webgl.Uint8Array
+import org.khronos.webgl.get
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
-import io.github.terrakok.compose.wizardAndroid.buildFiles
-import org.khronos.webgl.Uint8Array
-import org.khronos.webgl.get
+import kotlin.js.Promise
 
 
 internal actual fun openUrl(url: String?) {
@@ -18,43 +22,49 @@ internal actual fun openUrl(url: String?) {
 
 actual fun saveZipFile(name: String, bytes: ByteArray) {
     // Convert ByteArray to Uint8Array
+    console.log("3")
     val uint8Array = js("new Uint8Array(bytes.length)")
     for (i in bytes.indices) {
         uint8Array[i] = bytes[i]
     }
-
+    console.log("4")
     val blob = Blob(arrayOf(uint8Array), BlobPropertyBag(type = "application/zip"))
     val url = URL.createObjectURL(blob)
-
     val a = document.createElement("a")
     a.setAttribute("href", url)
     a.setAttribute("download", "$name.zip")
+    console.log("5")
     document.body?.appendChild(a)
     a.asDynamic().click()
     document.body?.removeChild(a)
     URL.revokeObjectURL(url)
 }
 
-@JsModule("fflate")
+@JsModule("jszip")
 @JsNonModule
-external object Fflate {
-    fun zipSync(files: dynamic): Uint8Array
+external class JSZip {
+    fun file(path: String, data: String): JSZip
+    fun generateAsync(options: dynamic): Promise<Uint8Array>
+
+    companion object {
+        operator fun invoke(): JSZip
+    }
 }
 
-actual fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
-    val files = projectInfo.buildFiles()
-    val zipInput = js("{}")
+suspend fun generateZip(files: List<ProjectFile>): ByteArray {
+    val zip = JSZip()
+    files.forEach { zip.file(it.path, it.content) }
 
-    files.forEach { file ->
-        zipInput[file.path] = file.content
+    val uint8Array = zip.generateAsync(js("{ type: 'uint8array' }")).await()
+
+    val result = ByteArray(uint8Array.length)
+    for (i in result.indices) {
+        result[i] = uint8Array[i]
     }
+    return result
+}
 
-    val result: Uint8Array = Fflate.zipSync(zipInput)
-
-    // Convert Uint8Array to ByteArray
-    val byteArray = ByteArray(result.length)
-    for (i in 0 until result.length) {
-        byteArray[i] = result[i]
-    }
-    return byteArray
+@OptIn(ExperimentalCoroutinesApi::class)
+actual suspend fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
+    return generateZip(projectInfo.buildFiles())
 }

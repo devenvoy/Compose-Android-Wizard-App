@@ -149,7 +149,7 @@ val material3 = AndroidDependency(
     url = "https://developer.android.com/jetpack/androidx/releases/compose-material3",
     group = "androidx.compose.material3",
     id = "material3",
-    version = "1.12.0",
+    version = "1.3.2",
     catalogVersionName = "material",
     catalogName = "androidx-material3"
 )

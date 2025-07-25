@@ -30,3 +30,10 @@ class AndroidManifest(info: AndroidProjectInfo) : ProjectFile {
         </manifest>
     """.trimIndent()
 }
+
+class DrawableResource(): ProjectFile{
+    override val path = ""
+    override val content = """
+        
+    """.trimIndent()
+}

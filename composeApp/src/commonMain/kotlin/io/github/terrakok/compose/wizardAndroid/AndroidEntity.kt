@@ -7,7 +7,7 @@ data class AndroidProjectInfo(
     val packageId: String = "org.company.app",
     val name: String = "Android App",
     val gradleVersion: String = "8.11.1",
-    val kotlinVersion: String = "2.0.21",
+    val kotlinVersion: String = "2.2.0",
     val agpVersion: String = "8.11.1",
     val minSdk: Int = 21,
     val targetSdk: Int = 36,

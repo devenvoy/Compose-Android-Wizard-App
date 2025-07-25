@@ -6,35 +6,41 @@ import io.github.terrakok.compose.wizardAndroid.ProjectFile
 class GradleLibsVersion(info: AndroidProjectInfo) : ProjectFile {
     override val path = "gradle/libs.versions.toml"
     override val content = buildString {
-        // versions
+        // === [versions] ===
         appendLine("[versions]")
         appendLine()
 
-        appendLine("agp = \"${info.agpVersion}\"")
         appendLine("kotlin = \"${info.kotlinVersion}\"")
+        appendLine("agp = \"${info.agpVersion}\"")
         appendLine("compose = \"${info.composeVersion}\"")
 
-        /*
-                info.dependencies
-                    .filter { it != KotlinxSerializationPlugin }
-                    .distinctBy { it.catalogVersionName }
-                    .forEach {
-                        appendLine("${it.catalogVersionName} = \"${it.version}\"")
-                    }
-                appendLine()
-         */
+        val predefined = setOf("kotlin", "agp", "compose")
 
-        // libraries
-        val libraries = info.dependencies.filterNot { it.isPlugin }
+        info.dependencies
+            .filter { it.catalogVersionName.isNotBlank() && it.catalogVersionName !in predefined }
+            .distinctBy { it.catalogVersionName }
+            .forEach {
+                appendLine("${it.catalogVersionName} = \"${it.version}\"")
+            }
+        appendLine()
+
+        // === [libraries] ===
         appendLine("[libraries]")
         appendLine()
 
-        libraries.forEach {
-            appendLine("${it.catalogName} = { module = \"${it.group}:${it.id}\", version.ref = \"${it.catalogVersionName}\" }")
-        }
+        info.dependencies
+            .filterNot { it.isPlugin }
+            .forEach {
+                val versionPart = if (it.catalogVersionName.isNotBlank())
+                    "version.ref = \"${it.catalogVersionName}\""
+                else
+                    "version = \"${it.version}\""
+
+                appendLine("${it.catalogName} = { module = \"${it.group}:${it.id}\", $versionPart }")
+            }
         appendLine()
 
-        // plugins
+        // === [plugins] ===
         appendLine("[plugins]")
         appendLine()
 
@@ -43,8 +49,15 @@ class GradleLibsVersion(info: AndroidProjectInfo) : ProjectFile {
         appendLine("kotlin-android = { id = \"org.jetbrains.kotlin.android\", version.ref = \"kotlin\" }")
         appendLine("kotlin-compose = { id = \"org.jetbrains.kotlin.plugin.compose\", version.ref = \"kotlin\" }")
 
-        info.dependencies.filter { it.isPlugin }.forEach {
-            appendLine("${it.catalogName} = { id = \"${it.group}\", version.ref = \"${it.catalogVersionName}\" }")
-        }
+        info.dependencies
+            .filter { it.isPlugin }
+            .forEach {
+                val versionPart = if (it.catalogVersionName.isNotBlank())
+                    "version.ref = \"${it.catalogVersionName}\""
+                else
+                    "version = \"${it.version}\""
+
+                appendLine("${it.catalogName} = { id = \"${it.group}\", $versionPart }")
+            }
     }
 }

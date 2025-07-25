@@ -15,7 +15,7 @@ actual fun saveZipFile(name: String, bytes: ByteArray) {
 }
 
 
-actual fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
+actual suspend fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
     val files = projectInfo.buildFiles()
     val baos = ByteArrayOutputStream()
     val zipStream = ZipOutputStream(baos)

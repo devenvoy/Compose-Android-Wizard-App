@@ -72,7 +72,7 @@ class MainActivityKt(info: AndroidProjectInfo) : ProjectFile {
         @Preview(showBackground = true)
         @Composable
         fun GreetingPreview() {
-            DemoProjectTheme {
+           ${info.safeName}Theme {
                 Greeting("Android")
             }
         }

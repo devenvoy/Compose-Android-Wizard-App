@@ -165,4 +165,4 @@ internal expect fun openUrl(url: String?)
 
 expect fun saveZipFile(name: String, bytes: ByteArray)
 
-expect fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray
+expect suspend fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray

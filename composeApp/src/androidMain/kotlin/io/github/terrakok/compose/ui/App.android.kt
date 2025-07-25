@@ -36,7 +36,7 @@ internal actual fun openUrl(url: String?) {
     AndroidApp.INSTANCE.startActivity(intent)
 }
 
-actual fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
+actual suspend fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
     return ByteArray(10)
 }
 

@@ -25,6 +25,7 @@ class AppBuildGradleKts(info: AndroidProjectInfo) : ProjectFile {
         appendLine("    alias(libs.plugins.android.application)")
         appendLine("    alias(libs.plugins.kotlin.android)")
         appendLine("    alias(libs.plugins.kotlin.compose)")
+        appendLine("    id(\"com.google.devtools.ksp\")")
         plugins.forEach { dep ->
             appendLine("    ${dep.pluginNotation}")
         }

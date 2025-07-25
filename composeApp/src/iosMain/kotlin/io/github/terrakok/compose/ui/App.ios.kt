@@ -9,7 +9,7 @@ internal actual fun openUrl(url: String?) {
     UIApplication.sharedApplication.openURL(nsUrl)
 }
 
-actual fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
+actual suspend fun generateAndroidZip(projectInfo: AndroidProjectInfo): ByteArray {
     return ByteArray(10)
 }
 

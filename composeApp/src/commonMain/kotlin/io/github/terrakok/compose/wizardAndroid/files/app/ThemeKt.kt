@@ -6,7 +6,7 @@ import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
 class ThemeKt(info: AndroidProjectInfo) : ProjectFile {
     override val path = "app/src/main/java/${info.packagePath}/ui/theme/Theme.kt"
     override val content = """
-        package ${info.packageId}
+        package ${info.packageId}.ui.theme
 
         import android.os.Build
         import androidx.compose.foundation.isSystemInDarkTheme
@@ -17,8 +17,9 @@ class ThemeKt(info: AndroidProjectInfo) : ProjectFile {
         import androidx.compose.material3.lightColorScheme
         import androidx.compose.runtime.Composable
         import androidx.compose.ui.platform.LocalContext
+        import ${info.packageId}.*
 
-        private val LightColors = lightColors(
+        private val LightColors = lightColorScheme(
             primary = md_theme_light_primary,
             onPrimary = md_theme_light_onPrimary,
             secondary = md_theme_light_secondary,
@@ -31,7 +32,7 @@ class ThemeKt(info: AndroidProjectInfo) : ProjectFile {
             onSurface = md_theme_light_onSurface,
         )
 
-        private val DarkColors = darkColors(
+        private val DarkColors = darkColorScheme(
             primary = md_theme_dark_primary,
             onPrimary = md_theme_dark_onPrimary,
             secondary = md_theme_dark_secondary,
@@ -45,8 +46,8 @@ class ThemeKt(info: AndroidProjectInfo) : ProjectFile {
         )
 
         @Composable
-        internal fun ${info.safeName}Theme(
-            useDarkTheme: Boolean = isSystemInDarkTheme(),
+        fun ${info.safeName}Theme(
+            darkTheme: Boolean = isSystemInDarkTheme(),
              // Dynamic color is available on Android 12+
             dynamicColor: Boolean = true,
             content: @Composable () -> Unit
@@ -56,14 +57,14 @@ class ThemeKt(info: AndroidProjectInfo) : ProjectFile {
                     val context = LocalContext.current
                     if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
                 }   
-
-                darkTheme -> DarkColorScheme
-                else -> LightColorScheme
+        
+                darkTheme -> DarkColors
+                else -> LightColors
             }
-    
+        
             MaterialTheme(
                 colorScheme = colorScheme,
-                typography = Typography,
+                typography = Typography(),
                 content = content
             )
         }
