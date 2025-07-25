@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import io.github.skeptick.libres.compose.painterResource
 import io.github.terrakok.compose.Res
 import io.github.terrakok.compose.wizard.Dependency
-import io.github.terrakok.compose.wizardAndroid.AndroidDependency
+import io.github.terrakok.compose.wizardAndroid.GroupedAndroidDependency
 
 @Composable
 fun DependencyCard(
@@ -86,7 +86,7 @@ fun DependencyCard(
 @Composable
 fun DependencyCard(
     modifier: Modifier = Modifier,
-    dependency: AndroidDependency,
+    dependency: GroupedAndroidDependency,
     selected: MutableState<Boolean>
 ) {
     var isSelected by selected
@@ -107,7 +107,7 @@ fun DependencyCard(
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
                     style = MaterialTheme.typography.body2,
-                    text = dependency.description
+                    text = dependency.items.first().description
                 )
             }
             Image(
@@ -123,7 +123,7 @@ fun DependencyCard(
             )
             TextButton(
                 modifier = Modifier.align(Alignment.BottomEnd).padding(end = 8.dp),
-                onClick = { openUrl(dependency.url) }
+                onClick = { openUrl(dependency.items.first().url) }
             ) {
                 Text("MORE INFO")
             }
@@ -133,7 +133,7 @@ fun DependencyCard(
                 Text(
                     modifier = Modifier.align(Alignment.BottomStart).padding(16.dp),
                     style = MaterialTheme.typography.body2,
-                    text = dependency.version
+                    text = dependency.items.first().version
                 )
             }
         }

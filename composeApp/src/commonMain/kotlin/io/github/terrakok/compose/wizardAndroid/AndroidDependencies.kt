@@ -74,6 +74,7 @@ val composeBom = AndroidDependency(
     id = "compose-bom",
     version = "2025.07.00",
     catalogVersionName = "composeBom",
+    isPackage = true,
     catalogName = "androidx-compose-bom"
 )
 
@@ -360,5 +361,146 @@ val roomCompiler = AndroidDependency(
     id = "room-compiler",
     version = "2.7.2",
     catalogVersionName = "room",
+    isCompiler = true,
     catalogName = "room-compiler"
+)
+
+val hiltAndroid = AndroidDependency(
+    title = "Hilt Android",
+    description = "Dependency injection library for Android by Google.",
+    url = "https://dagger.dev/hilt/",
+    group = "com.google.dagger",
+    id = "hilt-android",
+    version = "2.56",
+    catalogVersionName = "hilt",
+    catalogName = "hilt-android",
+    isPlugin = false
+)
+
+val hiltCompiler = AndroidDependency(
+    title = "Hilt Compiler (Google)",
+    description = "Annotation processor for Hilt by Google.",
+    url = "https://dagger.dev/hilt/compiler.html",
+    group = "com.google.dagger",
+    id = "hilt-compiler",
+    version = "2.56",
+    catalogVersionName = "hilt",
+    catalogName = "hilt-compiler",
+    isCompiler = true
+)
+
+val hiltPlugin = AndroidDependency(
+    title = "Hilt Gradle Plugin",
+    description = "Gradle plugin for integrating Hilt into your Android project.",
+    url = "https://dagger.dev/hilt/gradle-setup.html",
+    group = "com.google.dagger",
+    id = "com.google.dagger.hilt.android",
+    version = "2.56",
+    catalogVersionName = "hilt",
+    catalogName = "hilt-android",
+    isPlugin = true
+)
+
+val hiltWork = AndroidDependency(
+    title = "Hilt WorkManager Integration",
+    description = "Hilt integration with WorkManager.",
+    url = "https://developer.android.com/jetpack/androidx/releases/hilt",
+    group = "androidx.hilt",
+    id = "hilt-work",
+    version = "1.2.0",
+    catalogVersionName = "androidxHilt",
+    catalogName = "androidx-hilt-work"
+)
+
+val hiltCompilerAndroidX = AndroidDependency(
+    title = "Hilt Compiler (AndroidX)",
+    description = "Annotation processor for Hilt AndroidX components.",
+    url = "https://developer.android.com/jetpack/androidx/releases/hilt",
+    group = "androidx.hilt",
+    id = "hilt-compiler",
+    version = "1.2.0",
+    catalogVersionName = "androidxHilt",
+    catalogName = "androidx-hilt-compiler",
+    isCompiler = true
+)
+
+
+val CoreGroup = GroupedAndroidDependency(
+    title = "Core",
+    items = listOf(
+        androidxCoreKtx,
+        lifecycleRuntimeKtx,
+        activityCompose
+    )
+)
+
+val ComposeUIGroup = GroupedAndroidDependency(
+    title = "Compose UI",
+    items = listOf(
+        composeBom,
+        composeUi,
+        composeUiGraphics,
+        composeUiTooling,
+        composeUiToolingPreview
+    )
+)
+
+val MaterialAndSplashGroup = GroupedAndroidDependency(
+    title = "Material & Splash",
+    items = listOf(material3,splashscreen, materialIconsExtended)
+)
+
+val MultidexConstraintGroup = GroupedAndroidDependency(
+    title = "Constraint & MultiDex",
+    items = listOf(constraintLayoutCompose,multidex)
+)
+
+val NavigationGroup = GroupedAndroidDependency(
+    title = "Navigation",
+    items = listOf(navigationCompose, navigationRuntimeKtx, hiltNavigationCompose)
+)
+
+val PagingGroup = GroupedAndroidDependency(
+    title = "Paging",
+    items = listOf(pagingCompose)
+)
+
+val LoggingGroup = GroupedAndroidDependency(
+    title = "Logging",
+    items = listOf(loggingInterceptor,timber)
+)
+
+val TestGroup = GroupedAndroidDependency(
+    title = "Testing",
+    items = listOf(
+        junit, androidxJunit, espressoCore,
+        composeUiTestManifest,
+        composeUiTestJunit4
+    )
+)
+
+val RoomDBGroup = GroupedAndroidDependency(
+    title = "Room",
+    items = listOf(roomRuntime, roomKtx, roomCompiler)
+)
+
+val RetrofitGroup = GroupedAndroidDependency(
+    title = "Retrofit",
+    items = listOf(retrofit, gsonConverter)
+)
+
+val LandscapistGroup = GroupedAndroidDependency(
+    title = "Landscapist",
+    items = listOf(landscapistCoil, landscapistPlaceholder, landscapistAnimation)
+)
+
+val HiltGroup = GroupedAndroidDependency(
+    title = "Hilt (DI)",
+    items = listOf(
+        hiltAndroid,
+        hiltCompiler,
+        hiltPlugin,
+//        hiltWork,
+        hiltCompilerAndroidX
+    )
 )

@@ -17,7 +17,6 @@ class ThemeKt(info: AndroidProjectInfo) : ProjectFile {
         import androidx.compose.material3.lightColorScheme
         import androidx.compose.runtime.Composable
         import androidx.compose.ui.platform.LocalContext
-        import ${info.packageId}.*
 
         private val LightColors = lightColorScheme(
             primary = md_theme_light_primary,
@@ -64,7 +63,7 @@ class ThemeKt(info: AndroidProjectInfo) : ProjectFile {
         
             MaterialTheme(
                 colorScheme = colorScheme,
-                typography = Typography(),
+                typography = MaterialTheme.typography,
                 content = content
             )
         }

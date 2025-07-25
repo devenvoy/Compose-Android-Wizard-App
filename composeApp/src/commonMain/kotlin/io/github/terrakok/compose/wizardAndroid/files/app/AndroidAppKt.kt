@@ -1,6 +1,7 @@
 package io.github.terrakok.compose.wizardAndroid.files.app
 
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
+import io.github.terrakok.compose.wizardAndroid.HiltGroup
 import io.github.terrakok.compose.wizardAndroid.ProjectFile
 
 class AndroidAppKt(info: AndroidProjectInfo) : ProjectFile {
@@ -9,13 +10,12 @@ class AndroidAppKt(info: AndroidProjectInfo) : ProjectFile {
         package ${info.packageId}
 
         import android.app.Application
-        import android.content.Intent
-        import android.net.Uri
-        import android.os.Bundle
+        ${if (info.dependencies.contains(HiltGroup)) "import dagger.hilt.android.HiltAndroidApp" else ""}
         
-        class AndroidApp : Application() {
+        ${if (info.dependencies.contains(HiltGroup)) "@HiltAndroidApp" else ""}
+        class ${info.safeName}App : Application() {
             companion object {
-                lateinit var INSTANCE: AndroidApp
+                lateinit var INSTANCE: ${info.safeName}App
             }
 
             override fun onCreate() {
@@ -43,7 +43,10 @@ class MainActivityKt(info: AndroidProjectInfo) : ProjectFile {
         import androidx.compose.runtime.Composable
         import androidx.compose.ui.Modifier
         import androidx.compose.ui.tooling.preview.Preview
+        import ${info.packageId}.ui.theme.AndroidAppTheme
+        ${if (info.dependencies.contains(HiltGroup)) "import dagger.hilt.android.AndroidEntryPoint" else ""}
         
+        ${if (info.dependencies.contains(HiltGroup)) "@AndroidEntryPoint" else ""}        
         class MainActivity : ComponentActivity() {
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)

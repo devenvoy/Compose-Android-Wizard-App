@@ -8,15 +8,16 @@ class GradleLibsVersion(info: AndroidProjectInfo) : ProjectFile {
     override val content = buildString {
         // === [versions] ===
         appendLine("[versions]")
-        appendLine()
 
         appendLine("kotlin = \"${info.kotlinVersion}\"")
         appendLine("agp = \"${info.agpVersion}\"")
         appendLine("compose = \"${info.composeVersion}\"")
 
         val predefined = setOf("kotlin", "agp", "compose")
+        val dependencies = info.dependencies
+            .flatMap { it.items }
 
-        info.dependencies
+        dependencies
             .filter { it.catalogVersionName.isNotBlank() && it.catalogVersionName !in predefined }
             .distinctBy { it.catalogVersionName }
             .forEach {
@@ -26,9 +27,8 @@ class GradleLibsVersion(info: AndroidProjectInfo) : ProjectFile {
 
         // === [libraries] ===
         appendLine("[libraries]")
-        appendLine()
 
-        info.dependencies
+        dependencies
             .filterNot { it.isPlugin }
             .forEach {
                 val versionPart = if (it.catalogVersionName.isNotBlank())
@@ -42,14 +42,13 @@ class GradleLibsVersion(info: AndroidProjectInfo) : ProjectFile {
 
         // === [plugins] ===
         appendLine("[plugins]")
-        appendLine()
 
         appendLine("android-application = { id = \"com.android.application\", version.ref = \"agp\" }")
         appendLine("android-library = { id = \"com.android.library\", version.ref = \"agp\" }")
         appendLine("kotlin-android = { id = \"org.jetbrains.kotlin.android\", version.ref = \"kotlin\" }")
         appendLine("kotlin-compose = { id = \"org.jetbrains.kotlin.plugin.compose\", version.ref = \"kotlin\" }")
 
-        info.dependencies
+        dependencies
             .filter { it.isPlugin }
             .forEach {
                 val versionPart = if (it.catalogVersionName.isNotBlank())
@@ -57,7 +56,7 @@ class GradleLibsVersion(info: AndroidProjectInfo) : ProjectFile {
                 else
                     "version = \"${it.version}\""
 
-                appendLine("${it.catalogName} = { id = \"${it.group}\", $versionPart }")
+                appendLine("${it.catalogName} = { id = \"${it.id}\", $versionPart }")
             }
     }
 }

@@ -14,8 +14,14 @@ import io.github.terrakok.compose.wizardAndroid.files.app.AndroidAppKt
 import io.github.terrakok.compose.wizardAndroid.files.app.AndroidManifest
 import io.github.terrakok.compose.wizardAndroid.files.app.AppBuildGradleKts
 import io.github.terrakok.compose.wizardAndroid.files.app.ColorKt
+import io.github.terrakok.compose.wizardAndroid.files.app.ColorResource
+import io.github.terrakok.compose.wizardAndroid.files.app.DimenResource
+import io.github.terrakok.compose.wizardAndroid.files.app.DrawableResource
 import io.github.terrakok.compose.wizardAndroid.files.app.MainActivityKt
+import io.github.terrakok.compose.wizardAndroid.files.app.StringResource
 import io.github.terrakok.compose.wizardAndroid.files.app.ThemeKt
+import io.github.terrakok.compose.wizardAndroid.files.app.ThemeNightResource
+import io.github.terrakok.compose.wizardAndroid.files.app.ThemeResource
 
 
 fun AndroidProjectInfo.buildFiles(): List<ProjectFile> = buildList {
@@ -38,6 +44,13 @@ fun AndroidProjectInfo.buildFiles(): List<ProjectFile> = buildList {
     add(ColorKt(this@buildFiles))
     add(ThemeKt(this@buildFiles))
     add(AndroidAppKt(this@buildFiles))
+
+    add(DrawableResource())
+    add(ColorResource())
+    add(DimenResource())
+    add(StringResource(this@buildFiles))
+    add(ThemeResource(this@buildFiles))
+    add(ThemeNightResource(this@buildFiles))
 
     /*    if (dependencies.contains(ApolloPlugin)) {
             add(GraphQLSchema())

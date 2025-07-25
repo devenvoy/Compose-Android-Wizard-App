@@ -1,7 +1,5 @@
 package io.github.terrakok.compose.wizardAndroid
 
-import io.github.terrakok.compose.wizard.Dependency
-
 // Basic Android project information
 data class AndroidProjectInfo(
     val packageId: String = "org.company.app",
@@ -13,7 +11,7 @@ data class AndroidProjectInfo(
     val targetSdk: Int = 36,
     val compileSdk: Int = 36,
     val composeVersion: String = "1.8.3",
-    val dependencies: Set<AndroidDependency> = defaultAndroidDependencies
+    val dependencies: Set<GroupedAndroidDependency> = defaultAndroidDependencies
 ) {
     val packagePath get() = packageId.replace(".", "/")
     val safeName get() = name.replace(" ", "")
@@ -23,14 +21,7 @@ data class AndroidProjectInfo(
 }
 
 val defaultAndroidDependencies = setOf(
-    activityCompose,
-    composeUiTooling,
-    material3,
-    lifecycleRuntimeKtx,
-    androidxCoreKtx,
-    junit,
-    espressoCore,
-    composeBom
+   CoreGroup,ComposeUIGroup,TestGroup,MaterialAndSplashGroup
 )
 
 // Represents a library or plugin used in the Android project
@@ -44,14 +35,24 @@ data class AndroidDependency(
     val catalogVersionName: String,
     val catalogName: String,
     val isPlugin: Boolean = false,
+    val isCompiler: Boolean = false,
+    val isPackage: Boolean = false
 )
 
 // Accessors for Gradle notation
 val AndroidDependency.catalogAccessor get() = catalogName.replace("-", ".")
 val AndroidDependency.libraryNotation get() = "implementation(libs.$catalogAccessor)"
 val AndroidDependency.pluginNotation get() = "alias(libs.plugins.$catalogAccessor)"
+val AndroidDependency.compilerNotation get() = "ksp(libs.$catalogAccessor)"
+val AndroidDependency.packageNotation get() = "implementation(platform(libs.$catalogAccessor))"
 
 interface ProjectFile {
     val path: String
     val content: String
 }
+
+
+data class GroupedAndroidDependency(
+    val title: String,
+    val items: List<AndroidDependency>
+)

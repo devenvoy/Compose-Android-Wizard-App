@@ -29,29 +29,18 @@ import androidx.compose.ui.unit.dp
 import io.github.skeptick.libres.compose.painterResource
 import io.github.terrakok.compose.Res
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
-import io.github.terrakok.compose.wizardAndroid.androidxJunit
-import io.github.terrakok.compose.wizardAndroid.composeUiTooling
-import io.github.terrakok.compose.wizardAndroid.constraintLayoutCompose
-import io.github.terrakok.compose.wizardAndroid.espressoCore
-import io.github.terrakok.compose.wizardAndroid.gson
-import io.github.terrakok.compose.wizardAndroid.gsonConverter
-import io.github.terrakok.compose.wizardAndroid.hiltNavigationCompose
-import io.github.terrakok.compose.wizardAndroid.junit
-import io.github.terrakok.compose.wizardAndroid.landscapistAnimation
-import io.github.terrakok.compose.wizardAndroid.landscapistCoil
-import io.github.terrakok.compose.wizardAndroid.landscapistPlaceholder
-import io.github.terrakok.compose.wizardAndroid.loggingInterceptor
-import io.github.terrakok.compose.wizardAndroid.materialIconsExtended
-import io.github.terrakok.compose.wizardAndroid.multidex
-import io.github.terrakok.compose.wizardAndroid.navigationCompose
-import io.github.terrakok.compose.wizardAndroid.navigationRuntimeKtx
-import io.github.terrakok.compose.wizardAndroid.pagingCompose
-import io.github.terrakok.compose.wizardAndroid.retrofit
-import io.github.terrakok.compose.wizardAndroid.roomCompiler
-import io.github.terrakok.compose.wizardAndroid.roomKtx
-import io.github.terrakok.compose.wizardAndroid.roomRuntime
-import io.github.terrakok.compose.wizardAndroid.splashscreen
-import io.github.terrakok.compose.wizardAndroid.timber
+import io.github.terrakok.compose.wizardAndroid.ComposeUIGroup
+import io.github.terrakok.compose.wizardAndroid.CoreGroup
+import io.github.terrakok.compose.wizardAndroid.HiltGroup
+import io.github.terrakok.compose.wizardAndroid.LandscapistGroup
+import io.github.terrakok.compose.wizardAndroid.LoggingGroup
+import io.github.terrakok.compose.wizardAndroid.MaterialAndSplashGroup
+import io.github.terrakok.compose.wizardAndroid.MultidexConstraintGroup
+import io.github.terrakok.compose.wizardAndroid.NavigationGroup
+import io.github.terrakok.compose.wizardAndroid.PagingGroup
+import io.github.terrakok.compose.wizardAndroid.RetrofitGroup
+import io.github.terrakok.compose.wizardAndroid.RoomDBGroup
+import io.github.terrakok.compose.wizardAndroid.TestGroup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -103,32 +92,18 @@ fun AndroidApp() = AppTheme {
                     VersionsTable(default)
 
                     val androidDeps = listOf(
-                        junit to mutableStateOf(true),
-                        androidxJunit to mutableStateOf(true),
-                        espressoCore to mutableStateOf(true),
-                        composeUiTooling to mutableStateOf(true),
-//                        composeUiTestManifest to mutableStateOf(true),
-//                        composeUiTestJunit4 to mutableStateOf(true),
-//                        material3 to mutableStateOf(true),
-                        materialIconsExtended to mutableStateOf(true),
-                        splashscreen to mutableStateOf(true),
-                        constraintLayoutCompose to mutableStateOf(true),
-                        multidex to mutableStateOf(true),
-                        navigationCompose to mutableStateOf(true),
-                        navigationRuntimeKtx to mutableStateOf(true),
-                        hiltNavigationCompose to mutableStateOf(true),
-                        pagingCompose to mutableStateOf(true),
-                        retrofit to mutableStateOf(true),
-                        gsonConverter to mutableStateOf(true),
-                        loggingInterceptor to mutableStateOf(true),
-                        gson to mutableStateOf(true),
-                        landscapistCoil to mutableStateOf(true),
-                        landscapistPlaceholder to mutableStateOf(true),
-                        landscapistAnimation to mutableStateOf(true),
-                        timber to mutableStateOf(true),
-                        roomRuntime to mutableStateOf(true),
-                        roomKtx to mutableStateOf(true),
-                        roomCompiler to mutableStateOf(true),
+                        CoreGroup to mutableStateOf(true) ,
+                        ComposeUIGroup to mutableStateOf(true) ,
+                        MaterialAndSplashGroup to mutableStateOf(true) ,
+                        NavigationGroup to mutableStateOf(true) ,
+                        PagingGroup to mutableStateOf(true) ,
+                        LoggingGroup to mutableStateOf(true) ,
+                        MultidexConstraintGroup to mutableStateOf(true) ,
+                        RoomDBGroup to mutableStateOf(true) ,
+                        RetrofitGroup to mutableStateOf(true) ,
+                        HiltGroup to mutableStateOf(true),
+                        LandscapistGroup to mutableStateOf(true) ,
+                        TestGroup to mutableStateOf(true)
                     )
 
 
