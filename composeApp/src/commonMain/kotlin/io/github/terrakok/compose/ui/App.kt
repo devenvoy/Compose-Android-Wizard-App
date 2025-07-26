@@ -49,6 +49,7 @@ import io.github.terrakok.compose.wizard.ProjectInfo
 import io.github.terrakok.compose.wizard.SQLDelightPlugin
 import io.github.terrakok.compose.wizard.Voyager
 import io.github.terrakok.compose.wizardAndroid.AndroidProjectInfo
+import io.github.terrakok.compose.wizardAndroid.CoilGroup
 import io.github.terrakok.compose.wizardAndroid.ComposeUIGroup
 import io.github.terrakok.compose.wizardAndroid.CoreGroup
 import io.github.terrakok.compose.wizardAndroid.HiltGroup
@@ -61,6 +62,7 @@ import io.github.terrakok.compose.wizardAndroid.PagingGroup
 import io.github.terrakok.compose.wizardAndroid.RetrofitGroup
 import io.github.terrakok.compose.wizardAndroid.RoomDBGroup
 import io.github.terrakok.compose.wizardAndroid.TestGroup
+import io.github.terrakok.compose.wizardAndroid.TypeSafeNavGroup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -245,6 +247,8 @@ fun AndroidPlatformApp() {
             RoomDBGroup to mutableStateOf(true),
             RetrofitGroup to mutableStateOf(true),
             HiltGroup to mutableStateOf(true),
+            TypeSafeNavGroup to mutableStateOf(true),
+            CoilGroup to mutableStateOf(true),
             LandscapistGroup to mutableStateOf(true),
             TestGroup to mutableStateOf(true)
         )

@@ -424,6 +424,64 @@ val hiltCompilerAndroidX = AndroidDependency(
     isCompiler = true
 )
 
+val navigationDependency = AndroidDependency(
+    title = "Navigation Compose",
+    description = "Jetpack Navigation for Compose",
+    url = "https://developer.android.com/jetpack/compose/navigation",
+    catalogName = "androidx-navigation",
+    catalogVersionName = "navVersion",
+    version = "2.8.3",
+    group = "androidx.navigation",
+    id = "navigation-compose"
+)
+
+val serializationDependency = AndroidDependency(
+    title = "Kotlinx Serialization JSON",
+    description = "Kotlinx JSON serialization",
+    url = "https://github.com/Kotlin/kotlinx.serialization",
+    catalogName = "kotlinx-serialization",
+    catalogVersionName = "kotlinSerialization",
+    version = "1.7.3",
+    group = "org.jetbrains.kotlinx",
+    id = "kotlinx-serialization-json"
+)
+
+val CoilComposeDependency = AndroidDependency(
+    title = "Coil Compose",
+    description = "Image loading support for Jetpack Compose using Coil",
+    url = "https://github.com/coil-kt/coil",
+    group = "io.coil-kt.coil3",
+    id = "coil-compose",
+    version = "3.3.0",
+    catalogVersionName = "coil3Version",
+    catalogName = "coil-compose"
+)
+
+val CoilNetworkOkHttpDependency = AndroidDependency(
+    title = "Coil Network OkHttp",
+    description = "Coil network support using OkHttp",
+    url = "https://github.com/coil-kt/coil",
+    group = "io.coil-kt.coil3",
+    id = "coil-network-okhttp",
+    version = "3.3.0",
+    catalogVersionName = "coil3Version",
+    catalogName = "coil-network-okhttp"
+)
+
+val CoilCoreDependency = AndroidDependency(
+    title = "Coil Core",
+    description = "Core image loading library using Coil",
+    url = "https://github.com/coil-kt/coil",
+    group = "io.coil-kt.coil3",
+    id = "coil",
+    version = "3.3.0",
+    catalogVersionName = "coil3Version",
+    catalogName = "coil"
+)
+
+
+//------------------------------------------------
+
 
 val CoreGroup = GroupedAndroidDependency(
     title = "Core",
@@ -502,5 +560,19 @@ val HiltGroup = GroupedAndroidDependency(
         hiltPlugin,
 //        hiltWork,
         hiltCompilerAndroidX
+    )
+)
+
+val TypeSafeNavGroup = GroupedAndroidDependency(
+    title = "Navigation (type-safe) & Serialization",
+    items = listOf(navigationDependency, serializationDependency)
+)
+
+val CoilGroup = GroupedAndroidDependency(
+    title = "Coil Image Loader",
+    items = listOf(
+        CoilComposeDependency,
+        CoilNetworkOkHttpDependency,
+        CoilCoreDependency
     )
 )
