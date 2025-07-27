@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -21,9 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import io.github.skeptick.libres.compose.painterResource
-import io.github.skeptick.libres.images.Image
-import io.github.terrakok.compose.Res
+import compose_multiplatform_wizard.composeapp.generated.resources.Res
+import compose_multiplatform_wizard.composeapp.generated.resources.android
+import compose_multiplatform_wizard.composeapp.generated.resources.apple
+import compose_multiplatform_wizard.composeapp.generated.resources.language
+import compose_multiplatform_wizard.composeapp.generated.resources.laptop
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun ComposeTargetGroup(
@@ -33,10 +37,10 @@ fun ComposeTargetGroup(
     browser: MutableState<Boolean>,
 ) {
     Row {
-        ComposeTargetButton(android, "Android", Res.image.android, true)
-        ComposeTargetButton(ios, "iOS", Res.image.apple, null)
-        ComposeTargetButton(desktop, "Desktop", Res.image.laptop, null)
-        ComposeTargetButton(browser, "Browser", Res.image.language, false)
+        ComposeTargetButton(android, "Android",  Res.drawable.android, true)
+        ComposeTargetButton(ios, "iOS", Res.drawable.apple, null)
+        ComposeTargetButton(desktop, "Desktop", Res.drawable.laptop, null)
+        ComposeTargetButton(browser, "Browser", Res.drawable.language, false)
     }
 }
 
@@ -44,7 +48,7 @@ fun ComposeTargetGroup(
 private fun ComposeTargetButton(
     state: MutableState<Boolean>,
     name: String,
-    icon: Image,
+    icon: DrawableResource,
     isFirst: Boolean?
 ) {
     val shape = when (isFirst) {
@@ -58,7 +62,7 @@ private fun ComposeTargetButton(
     Button(
         modifier = Modifier.width(120.dp).height(80.dp).shadow(0.dp),
         shape = shape,
-        border = if (isSelected) null else ButtonDefaults.outlinedBorder,
+        border = if (isSelected) null else ButtonDefaults.outlinedButtonBorder,
         colors = if (isSelected) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
         onClick = { isSelected = !isSelected }
     ) {
@@ -69,8 +73,8 @@ private fun ComposeTargetButton(
                 modifier = Modifier.width(20.dp),
                 painter = painterResource(icon),
                 colorFilter = ColorFilter.tint(
-                    if (isSelected) MaterialTheme.colors.onPrimary
-                    else MaterialTheme.colors.primary
+                    if (isSelected) MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.primary
                 ),
                 contentDescription = null
             )

@@ -1,12 +1,23 @@
 [versions]
 
-kotlin = "1.8.20"
-agp = "7.4.2"
-compose = "1.4.0-rc03"
-androidx-appcompat = "1.6.1"
-androidx-activityCompose = "1.7.0"
-compose-uitooling = "1.4.0"
-libres = "1.1.8"
+kotlin = "2.2.0"
+agp = "8.11.1"
+compose = "1.8.2"
+androidx-appcompat = "1.7.1"
+androidx-activityCompose = "1.10.1"
+compose-uitooling = "1.8.3"
+libres = "1.2.4"
+
+androidx-activity = "1.10.1"
+androidx-constraintlayout = "2.2.1"
+androidx-core = "1.16.0"
+androidx-espresso = "3.6.1"
+androidx-lifecycle = "2.9.1"
+androidx-testExt = "1.2.1"
+composeHotReload = "1.0.0-beta04"
+composeMultiplatform = "1.8.2"
+junit = "4.13.2"
+kotlinx-coroutines = "1.10.2"
 
 [libraries]
 
@@ -15,10 +26,25 @@ androidx-activityCompose = { module = "androidx.activity:activity-compose", vers
 compose-uitooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-uitooling" }
 libres = { module = "io.github.skeptick.libres:libres-compose", version.ref = "libres" }
 
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+junit = { module = "junit:junit", version.ref = "junit" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "androidx-constraintlayout" }
+androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+
+
 [plugins]
 
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 cocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 libres = { id = "io.github.skeptick.libres", version.ref = "libres" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }

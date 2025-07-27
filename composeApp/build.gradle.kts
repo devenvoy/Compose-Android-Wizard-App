@@ -1,32 +1,44 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.multiplatform)
-    alias(libs.plugins.compose)
-    alias(libs.plugins.cocoapods)
     alias(libs.plugins.android.application)
-    alias(libs.plugins.libres)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.cocoapods)
 }
 
 kotlin {
-    android {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+    androidTarget {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
-    jvm("desktop")
+    jvm()
 
     js {
         browser()
         binaries.executable()
     }
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+    }
+    applyDefaultHierarchyTemplate()
 
     cocoapods {
         version = "1.0.0"
@@ -41,89 +53,72 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(libs.libres)
-            }
+
+        androidMain.dependencies{
+            implementation(compose.preview)
+            implementation(libs.androidx.activityCompose)
+            implementation(libs.compose.uitooling)
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.materialIconsExtended)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.runtimeCompose)
         }
 
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.appcompat)
-                implementation(libs.androidx.activityCompose)
-                implementation(libs.compose.uitooling)
-            }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
 
-        val desktopMain by getting {
-            dependencies {
-                implementation(compose.desktop.common)
-                implementation(compose.desktop.currentOs)
-            }
+        jvmMain.dependencies {
+            implementation(compose.desktop.common)
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutinesSwing)
         }
 
-        val jsMain by getting {
-            dependencies {
-                implementation(compose.web.core)
-                implementation(npm("jszip", "3.10.1"))
-            }
-        }
-
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-            dependencies {
-            }
-        }
-
-        val iosX64Test by getting
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
+        jsMain.dependencies {
+            implementation(compose.html.core)
+            implementation(npm("jszip", "3.10.1"))
         }
     }
 }
 
 android {
     namespace = "io.github.terrakok.compose"
-    compileSdk = 33
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 35
 
         applicationId = "io.github.terrakok.compose.androidApp"
         versionCode = 1
         versionName = "1.0.0"
     }
-    sourceSets["main"].apply {
-        manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    packagingOptions {
-        resources.excludes.add("META-INF/**")
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+        }
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+}
+
+dependencies {
+    debugImplementation(compose.uiTooling)
 }
 
 compose.desktop {
@@ -134,17 +129,28 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "io.github.terrakok.compose.desktopApp"
             packageVersion = "1.0.0"
+            description = "Compose Multiplatform App"
+            copyright = "© 2024 My Name. All rights reserved."
+            windows{
+                shortcut = true
+                dirChooser = true
+            }
+            modules(
+                "java.sql",
+                "java.prefs",
+                "java.net.http",
+                "java.management",
+                "jdk.unsupported",
+                "java.instrument",
+                "jdk.security.auth",
+            )
+        }
+        buildTypes.release.proguard {
+            obfuscate.set(false)
+            configurationFiles.from(project.file("assemble/proguard-rules.pro"))
         }
     }
 }
-
-compose.experimental {
-    web.application {}
+composeCompiler {
+    featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
 }
-
-libres {
-    // https://github.com/Skeptick/libres#setup
-}
-tasks.getByPath("desktopProcessResources").dependsOn("libresGenerateResources")
-tasks.getByPath("desktopSourcesJar").dependsOn("libresGenerateResources")
-tasks.getByPath("jsProcessResources").dependsOn("libresGenerateResources")

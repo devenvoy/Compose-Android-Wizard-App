@@ -1,9 +1,9 @@
 package io.github.terrakok.compose.ui
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
@@ -11,7 +11,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 
-private val LightColors = lightColors(
+private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
     onPrimary = md_theme_light_onPrimary,
     secondary = md_theme_light_secondary,
@@ -24,7 +24,7 @@ private val LightColors = lightColors(
     onSurface = md_theme_light_onSurface,
 )
 
-private val DarkColors = darkColors(
+private val DarkColors = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     secondary = md_theme_dark_secondary,
@@ -49,7 +49,7 @@ fun AppTheme(
         val colors = if (!isDark) LightColors else DarkColors
 
         MaterialTheme(
-            colors = colors,
+            colorScheme = colors,
             typography = MaterialTheme.typography,
             content = {
                 Surface(content = content)

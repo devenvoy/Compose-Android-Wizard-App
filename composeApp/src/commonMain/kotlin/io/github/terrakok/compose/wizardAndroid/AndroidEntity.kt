@@ -1,6 +1,16 @@
 package io.github.terrakok.compose.wizardAndroid
 
-// Basic Android project information
+data class AndroidVersionPreset(
+    val name: String,
+    val kotlinVersion: String,
+    val composeVersion: String,
+    val composeBomVersion: String,
+    val gradleVersion: String,
+    val agpVersion: String,
+    val kspVersion : String
+)
+
+
 data class AndroidProjectInfo(
     val packageId: String = "org.company.app",
     val name: String = "Android App",
