@@ -5,7 +5,7 @@
         android:name=".ui.AndroidApp"
         android:icon="@android:drawable/ic_menu_compass"
         android:label="Compose Multiplatform Wizard"
-        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity
             android:name=".ui.AppActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"

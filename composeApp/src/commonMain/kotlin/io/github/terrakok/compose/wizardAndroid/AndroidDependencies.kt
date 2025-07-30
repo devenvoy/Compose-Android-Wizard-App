@@ -1,5 +1,37 @@
 package io.github.terrakok.compose.wizardAndroid
 
+
+val androidVersionPresets = listOf(
+    AndroidVersionPreset(
+        name = "Latest Stable (Narwhal)",
+        kotlinVersion = "2.2.0",
+        composeVersion = "1.8.2",
+        composeBomVersion = "2024.10.00",
+        gradleVersion = "8.13.0",
+        agpVersion = "8.11.1",
+        kspVersion = "2.2.0-2.0.2"
+    ),
+    AndroidVersionPreset(
+        name = "Android Studio Meerkat Compatible",
+        kotlinVersion = "2.0.0",
+        composeVersion = "1.5.4",
+        gradleVersion = "8.9",
+        composeBomVersion = "2024.10.00",
+        agpVersion = "8.7.3",
+        kspVersion = "2.0.10-1.0.24"
+    ),
+    AndroidVersionPreset(
+        name = "Android Studio LadyBug Compatible",
+        kotlinVersion = "1.9.20",
+        composeVersion = "1.5.5",
+        composeBomVersion = "2024.10.00",
+        gradleVersion = "6.8.3",
+        agpVersion = "8.6.2",
+        kspVersion = "1.9.20‑1.0.14"
+    )
+)
+
+
 val androidxCoreKtx = AndroidDependency(
     title = "AndroidX Core KTX",
     description = "Kotlin extensions for Android core libraries",
@@ -515,11 +547,16 @@ val MultidexConstraintGroup = GroupedAndroidDependency(
 
 val NavigationGroup = GroupedAndroidDependency(
     title = "Navigation",
-    items = listOf(navigationCompose, navigationRuntimeKtx, hiltNavigationCompose)
+    items = listOf(navigationCompose, navigationRuntimeKtx)
+)
+
+val TypeSafeNavGroup = GroupedAndroidDependency(
+    title = "Navigation (type-safe) & Serialization",
+    items = listOf(navigationDependency, serializationDependency)
 )
 
 val PagingGroup = GroupedAndroidDependency(
-    title = "Paging",
+    title = "Pagination",
     items = listOf(pagingCompose)
 )
 
@@ -558,14 +595,10 @@ val HiltGroup = GroupedAndroidDependency(
         hiltAndroid,
         hiltCompiler,
         hiltPlugin,
+        hiltNavigationCompose
 //        hiltWork,
-        hiltCompilerAndroidX
+//        hiltCompilerAndroidX,
     )
-)
-
-val TypeSafeNavGroup = GroupedAndroidDependency(
-    title = "Navigation (type-safe) & Serialization",
-    items = listOf(navigationDependency, serializationDependency)
 )
 
 val CoilGroup = GroupedAndroidDependency(

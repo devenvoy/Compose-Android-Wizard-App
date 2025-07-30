@@ -1,3 +1,4 @@
+/*
 @file:Suppress(
     "INVISIBLE_MEMBER",
     "INVISIBLE_REFERENCE",
@@ -14,11 +15,14 @@ import org.w3c.dom.HTMLTitleElement
 
 private const val CANVAS_ELEMENT_ID = "ComposeTarget" // Hardwired into ComposeWindow
 
-/**
+*/
+/*
  * A Skiko/Canvas-based top-level window using the browser's entire viewport. Supports resizing.
  * Author: https://github.com/OliverO2
  * Source: https://github.com/OliverO2/compose-counting-grid/blob/eb79f7c8be7804d4323114be30ce498cfac6d2b0/src/frontendWebMain/kotlin/BrowserViewportWindow.kt
- */
+*//*
+
+
 @Suppress("FunctionName")
 fun BrowserViewportWindow(
     title: String = "Untitled",
@@ -77,3 +81,4 @@ fun BrowserViewportWindow(
         }
     }
 }
+*/

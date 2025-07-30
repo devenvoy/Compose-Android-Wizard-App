@@ -7,8 +7,14 @@ import io.github.terrakok.compose.wizardAndroid.buildFiles
 import java.awt.Desktop
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.net.URI
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+
+internal actual fun openUrl(url: String?) {
+    val uri = url?.let { URI.create(it) } ?: return
+    Desktop.getDesktop().browse(uri)
+}
 
 actual fun saveZipFile(name: String, bytes: ByteArray) {
     val downloadsPath = File(System.getProperty("user.home"), "Downloads")
