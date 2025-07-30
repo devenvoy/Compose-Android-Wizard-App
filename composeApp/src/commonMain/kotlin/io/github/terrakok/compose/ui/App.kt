@@ -90,27 +90,26 @@ fun App() {
             LocalShowVersions provides mutableStateOf(false)
         ) {
             Box(
-                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                modifier = Modifier.fillMaxSize()
             ) {
                 Card(
                     modifier = Modifier
-                        .padding(40.dp)
                         .align(Alignment.Center)
-                        .width(1080.dp)
-                        .requiredWidthIn(min = 420.dp),
+                        .verticalScroll(rememberScrollState()),
                     colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
                 ) {
-                    TopMenu(
-                        isDark = isDark,
-                        isMultiplatform = isMultiplatform
-                    )
-
                     if (isMultiplatform.value) {
                         ComposeMultiPlatformApp()
                     } else {
                         AndroidPlatformApp()
                     }
                 }
+
+                TopMenu(
+                    isDark = isDark,
+                    isMultiplatform = isMultiplatform,
+                    onDownloadClick = {}
+                )
             }
         }
     }
@@ -120,7 +119,10 @@ fun App() {
 @Composable
 fun ComposeMultiPlatformApp() {
     Column(
-        modifier = Modifier.padding(horizontal = 40.dp),
+        modifier = Modifier
+            .width(1080.dp)
+            .requiredWidthIn(min = 420.dp)
+            .padding(horizontal = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Header()
@@ -223,7 +225,10 @@ fun ComposeMultiPlatformApp() {
 @Composable
 fun AndroidPlatformApp() {
     Column(
-        modifier = Modifier.padding(horizontal = 40.dp),
+        modifier = Modifier
+            .width(1080.dp)
+            .requiredWidthIn(min = 420.dp)
+            .padding(horizontal = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Header(text = "Android Template Wizard", image = Res.drawable.android, tint = Color.Green)
