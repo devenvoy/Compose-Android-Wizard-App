@@ -3,17 +3,18 @@ package io.github.terrakok.compose.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -44,7 +45,7 @@ fun BoxScope.TopMenu(
     modifier: Modifier = Modifier,
     isDark: MutableState<Boolean>,
     isMultiplatform: MutableState<Boolean>,
-    onDownloadClick: (() -> Unit)? = null
+    downloadButtonState: ButtonState
 ) {
     var isShowVersions by LocalShowVersions.current
     val windowInfo = LocalWindowInfo.current.containerSize.height
@@ -60,9 +61,11 @@ fun BoxScope.TopMenu(
         expanded = true,
         leadingContent = {
             Button(
-                enabled = onDownloadClick != null,
+                modifier = Modifier.height(60.dp),
+                enabled = downloadButtonState.enabled,
+                shapes = ButtonDefaults.shapesFor(60.dp),
                 onClick = {
-                    scope.launch(Dispatchers.Default) { onDownloadClick?.invoke() }
+                    scope.launch(Dispatchers.Default) { downloadButtonState.onClick() }
                 }
             ) {
                 Image(
@@ -75,7 +78,25 @@ fun BoxScope.TopMenu(
             }
         },
         trailingContent = {
-            AppBarRow(overflowIndicator = { menuState -> }) {
+            AppBarRow(
+//                maxItemCount = 2,
+                overflowIndicator = { menuState ->
+                    IconButton(
+                        onClick = {
+                            if (menuState.isExpanded) {
+                                menuState.dismiss()
+                            } else {
+                                menuState.show()
+                            }
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.MoreVert,
+                            contentDescription = "Localized description",
+                        )
+                    }
+                },
+            ) {
                 toggleableItem(
                     icon = {
                         Icon(
@@ -83,9 +104,9 @@ fun BoxScope.TopMenu(
                             contentDescription = "Localized description",
                         )
                     },
-                    label = "Android switch",
+                    label = if (isMultiplatform.value) "Switch to Android Project" else "Switch to Multiplatform Project",
                     checked = !isMultiplatform.value,
-                    onCheckedChange = { isMultiplatform.value = it }
+                    onCheckedChange = { isMultiplatform.value = !isMultiplatform.value }
                 )
                 toggleableItem(
                     icon = {
@@ -96,7 +117,7 @@ fun BoxScope.TopMenu(
                             contentDescription = "Localized description",
                         )
                     },
-                    label = "Versions switch",
+                    label = if (isShowVersions) "Hide versions" else "Show Versions",
                     checked = isShowVersions,
                     onCheckedChange = { isShowVersions = it }
                 )
@@ -121,51 +142,10 @@ fun BoxScope.TopMenu(
                         )
                     },
                     onCheckedChange = { isDark.value = it },
-                    label = "isDark",
+                    label = if (isDark.value) "Light theme" else "Dark theme",
                 )
             }
         },
-        content = {
-            FilledIconButton(
-                modifier = Modifier.width(64.dp),
-                onClick = { /* doSomething() */ },
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Localized description")
-            }
-        },
+        content = {}
     )
 }
-
-/*
-Row(
-modifier = modifier.fillMaxWidth().padding( horizontal = 10.dp),
-horizontalArrangement = Arrangement.End,
-verticalAlignment = Alignment.CenterVertically
-) {
-
-    Image(
-        modifier = Modifier
-            .padding(4.dp)
-            .size(40.dp)
-            .clip(CircleShape)
-            .clickable { openUrl("https://github.com/devenvoy/Compose-Android-Wizard-App") }
-            .padding(8.dp),
-        painter = painterResource(Res.drawable.github),
-        colorFilter = ColorFilter.tint(getContentColor()),
-        contentDescription = null
-    )
-    Image(
-        modifier = Modifier
-            .padding(4.dp)
-            .size(40.dp)
-            .clip(CircleShape)
-            .clickable { isDark.value = !isDark.value }
-            .padding(8.dp),
-        painter = painterResource(
-            if (isDark.value) Res.drawable.light_mode else Res.drawable.dark_mode
-        ),
-        colorFilter = ColorFilter.tint(getContentColor()),
-        contentDescription = null
-    )
-}
-*/

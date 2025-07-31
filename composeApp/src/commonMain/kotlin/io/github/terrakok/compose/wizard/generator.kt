@@ -15,12 +15,12 @@ import io.github.terrakok.compose.wizard.files.app.AndroidManifest
 import io.github.terrakok.compose.wizard.files.app.AppKt
 import io.github.terrakok.compose.wizard.files.app.BrowserAppKt
 import io.github.terrakok.compose.wizard.files.app.BrowserMainKt
-import io.github.terrakok.compose.wizard.files.app.BrowserViewportWindowKt
 import io.github.terrakok.compose.wizard.files.app.ColorKt
 import io.github.terrakok.compose.wizard.files.app.DesktopAppKt
 import io.github.terrakok.compose.wizard.files.app.DesktopMainKt
 import io.github.terrakok.compose.wizard.files.app.GraphQLQuery
 import io.github.terrakok.compose.wizard.files.app.GraphQLSchema
+import io.github.terrakok.compose.wizard.files.app.IndexCss
 import io.github.terrakok.compose.wizard.files.app.IndexHtml
 import io.github.terrakok.compose.wizard.files.app.IosAccentColor
 import io.github.terrakok.compose.wizard.files.app.IosAppIcon
@@ -88,7 +88,7 @@ fun ProjectInfo.buildFiles() = buildList {
     if (this@buildFiles.hasBrowser) {
         add(BrowserAppKt(this@buildFiles))
         add(IndexHtml(this@buildFiles))
+        add(IndexCss())
         add(BrowserMainKt(this@buildFiles))
-        add(BrowserViewportWindowKt())
     }
 }

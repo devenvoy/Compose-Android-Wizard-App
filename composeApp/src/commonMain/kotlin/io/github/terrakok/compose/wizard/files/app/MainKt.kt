@@ -4,7 +4,7 @@ import io.github.terrakok.compose.wizard.ProjectFile
 import io.github.terrakok.compose.wizard.ProjectInfo
 
 class DesktopMainKt(info: ProjectInfo) : ProjectFile {
-    override val path = "composeApp/src/desktopMain/kotlin/main.kt"
+    override val path = "composeApp/src/jvmMain/kotlin/main.kt"
     override val content = """
         import androidx.compose.ui.unit.dp
         import androidx.compose.ui.window.Window
@@ -40,11 +40,15 @@ class BrowserMainKt(info: ProjectInfo) : ProjectFile {
     override val path = "composeApp/src/jsMain/kotlin/main.kt"
     override val content = """
         import ${info.packageId}.App
+        import androidx.compose.ui.ExperimentalComposeUiApi
+        import androidx.compose.ui.window.ComposeViewport
+        import kotlinx.browser.document
         import org.jetbrains.skiko.wasm.onWasmReady
 
+        @OptIn(ExperimentalComposeUiApi::class)
         fun main() {
             onWasmReady {
-                BrowserViewportWindow("${info.name}") {
+                ComposeViewport(document.body!!) {
                     App()
                 }
             }

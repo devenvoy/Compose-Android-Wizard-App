@@ -271,7 +271,6 @@ class GeneratorTest {
                 androidx-activityCompose = "${AndroidxActivityCompose.version}"
                 apollo = "${ApolloRuntime.version}"
                 compose-uitooling = "${ComposeUiTooling.version}"
-                libres = "${LibresCompose.version}"
                 voyager = "${Voyager.version}"
                 composeImageLoader = "${ImageLoader.version}"
                 napier = "${Napier.version}"

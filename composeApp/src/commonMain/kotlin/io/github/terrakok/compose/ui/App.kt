@@ -1,7 +1,7 @@
 package io.github.terrakok.compose.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,18 +12,24 @@ import androidx.compose.foundation.layout.requiredWidthIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SplitButtonDefaults
+import androidx.compose.material3.SplitButtonLayout
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -35,12 +41,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import compose_multiplatform_wizard.composeapp.generated.resources.Res
-import compose_multiplatform_wizard.composeapp.generated.resources.android
-import compose_multiplatform_wizard.composeapp.generated.resources.arrow_circle_down
+import compose_multiplatform_wizard.composeapp.generated.resources.ic_android
 import io.github.terrakok.compose.wizard.ApolloPlugin
 import io.github.terrakok.compose.wizard.BuildConfigPlugin
 import io.github.terrakok.compose.wizard.ComposeIcons
@@ -51,7 +57,6 @@ import io.github.terrakok.compose.wizard.KotlinxCoroutinesCore
 import io.github.terrakok.compose.wizard.KotlinxDateTime
 import io.github.terrakok.compose.wizard.KotlinxSerializationJson
 import io.github.terrakok.compose.wizard.KtorCore
-import io.github.terrakok.compose.wizard.LibresCompose
 import io.github.terrakok.compose.wizard.MultiplatformSettings
 import io.github.terrakok.compose.wizard.Napier
 import io.github.terrakok.compose.wizard.ProjectInfo
@@ -75,7 +80,6 @@ import io.github.terrakok.compose.wizardAndroid.TypeSafeNavGroup
 import io.github.terrakok.compose.wizardAndroid.androidVersionPresets
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
 
 val LocalShowVersions = compositionLocalOf { mutableStateOf(false) }
 
@@ -84,6 +88,7 @@ fun App() {
     val systemTheme = isSystemInDarkTheme()
     val isDark = remember { mutableStateOf(systemTheme) }
     val isMultiplatform = remember { mutableStateOf(true) }
+    val downloadButtonState = rememberButtonState()
 
     AppTheme(isDark) {
         CompositionLocalProvider(
@@ -99,25 +104,26 @@ fun App() {
                     colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
                 ) {
                     if (isMultiplatform.value) {
-                        ComposeMultiPlatformApp()
+                        ComposeMultiPlatformApp(downloadButtonState)
                     } else {
-                        AndroidPlatformApp()
+                        AndroidPlatformApp(downloadButtonState)
                     }
                 }
 
+                TextFieldState()
+
                 TopMenu(
                     isDark = isDark,
-                    isMultiplatform = isMultiplatform,
-                    onDownloadClick = {}
+                    isMultiplatform = isMultiplatform, downloadButtonState = downloadButtonState
                 )
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ComposeMultiPlatformApp() {
+fun ComposeMultiPlatformApp(downloadButtonState: ButtonState) {
     Column(
         modifier = Modifier
             .width(1080.dp)
@@ -125,49 +131,23 @@ fun ComposeMultiPlatformApp() {
             .padding(horizontal = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Header()
-        Spacer(Modifier.size(20.dp))
 
         val default = ProjectInfo()
+        val isShowVersions by LocalShowVersions.current
         var projectNameState by remember { mutableStateOf(default.name) }
         var projectIdState by remember { mutableStateOf(default.packageId) }
-
-        OutlinedTextField(
-            modifier = Modifier.width(480.dp),
-            singleLine = true,
-            value = projectNameState,
-            onValueChange = { projectNameState = it },
-            label = { Text("Project name") }
-        )
-        Spacer(Modifier.size(20.dp))
-
-        OutlinedTextField(
-            modifier = Modifier.width(480.dp),
-            singleLine = true,
-            value = projectIdState,
-            onValueChange = { projectIdState = it },
-            label = { Text("Project ID") }
-        )
-        Spacer(Modifier.size(20.dp))
-
         val androidState = remember { mutableStateOf(true) }
         val iosState = remember { mutableStateOf(true) }
         val desktopState = remember { mutableStateOf(true) }
         val browserState = remember { mutableStateOf(true) }
-        ComposeTargetGroup(androidState, iosState, desktopState, browserState)
-        Spacer(Modifier.size(20.dp))
-
-//                    VersionsTable(default)
-
         val deps = listOf(
             Napier to mutableStateOf(true),
-            LibresCompose to mutableStateOf(true),
-            Voyager to mutableStateOf(true),
             ImageLoader to mutableStateOf(true),
             KotlinxCoroutinesCore to mutableStateOf(true),
             BuildConfigPlugin to mutableStateOf(true),
-            KtorCore to mutableStateOf(false),
             ComposeIcons to mutableStateOf(false),
+            Voyager to mutableStateOf(false),
+            KtorCore to mutableStateOf(false),
             KotlinxSerializationJson to mutableStateOf(false),
             KotlinxDateTime to mutableStateOf(false),
             MultiplatformSettings to mutableStateOf(false),
@@ -176,54 +156,81 @@ fun ComposeMultiPlatformApp() {
             SQLDelightPlugin to mutableStateOf(false),
             ApolloPlugin to mutableStateOf(false),
         )
-
-        SimpleGrid(
-            modifier = Modifier,
-            columnWidth = 300.dp,
-            itemCount = deps.size
-        ) {
-            val (dep, state) = deps[it]
-            DependencyCard(dependency = dep, selected = state)
-        }
-        Spacer(Modifier.size(20.dp))
-
         val isAndroid by androidState
         val isIos by iosState
         val isDesktop by desktopState
         val isBrowser by browserState
 
         val scope = rememberCoroutineScope()
-        val isReady = (isAndroid || isIos || isDesktop || isBrowser)
+        downloadButtonState.enabled = (isAndroid || isIos || isDesktop || isBrowser)
                 && projectNameState.isNotBlank() && projectIdState.isNotBlank()
-        Button(
-            enabled = isReady,
-            onClick = {
-                scope.launch(Dispatchers.Default) {
-                    val zipBytes =
-                        generateZip(
-                            default.copy(
-                                name = projectNameState,
-                                packageId = projectIdState,
-                                dependencies = deps.mapNotNull { if (it.second.value) it.first else null }
-                            .toSet()))
-                    saveZipFile(default.name, zipBytes)
-                }
+
+        downloadButtonState.onClick = {
+            scope.launch(Dispatchers.Default) {
+                val zipBytes = generateZip(
+                    default.copy(
+                    name = projectNameState,
+                    packageId = projectIdState,
+                    dependencies = deps.mapNotNull { if (it.second.value) it.first else null }
+                        .toSet()))
+                saveZipFile(default.name, zipBytes)
             }
-        ) {
-            Image(
-                painter = painterResource(Res.drawable.arrow_circle_down),
-                colorFilter = ColorFilter.tint(getContentColor()),
-                contentDescription = null
-            )
-            Spacer(Modifier.size(10.dp))
-            Text("Download")
         }
+
+        Spacer(Modifier.size(40.dp))
+        Header()
+        Spacer(Modifier.size(20.dp))
+
+        OutlinedTextField(
+            modifier = Modifier.width(480.dp),
+            singleLine = true,
+            shape = RoundedCornerShape(50),
+            value = projectNameState,
+            onValueChange = { projectNameState = it },
+            label = { Text("Project name") })
+        Spacer(Modifier.size(20.dp))
+
+        OutlinedTextField(
+            modifier = Modifier.width(480.dp),
+            singleLine = true,
+            shape = RoundedCornerShape(50),
+            value = projectIdState,
+            onValueChange = { projectIdState = it },
+            label = { Text("Project ID") })
+        Spacer(Modifier.size(20.dp))
+
+        ComposeTargetGroup(androidState, iosState, desktopState, browserState)
+        Spacer(Modifier.size(20.dp))
+
+        AnimatedVisibility(isShowVersions) {
+            VersionsTable(
+                AndroidProjectInfo(
+                    default.packageId,
+                    default.name,
+                    default.gradleVersion,
+                    default.kotlinVersion,
+                    default.agpVersion,
+                    default.androidMinSdk,
+                    default.androidTargetSdk
+                )
+            )
+        }
+
+        SimpleGrid(
+            modifier = Modifier, columnWidth = 300.dp, itemCount = deps.size
+        ) {
+            val (dep, state) = deps[it]
+            DependencyCard(dependency = dep, selected = state)
+        }
+
+        Spacer(Modifier.size(100.dp))
+
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AndroidPlatformApp() {
+fun AndroidPlatformApp(downloadButtonState: ButtonState) {
     Column(
         modifier = Modifier
             .width(1080.dp)
@@ -231,9 +238,25 @@ fun AndroidPlatformApp() {
             .padding(horizontal = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Header(text = "Android Template Wizard", image = Res.drawable.android, tint = Color.Green)
-        Spacer(Modifier.size(20.dp))
 
+        val androidDeps = listOf(
+            CoreGroup to mutableStateOf(true),
+            ComposeUIGroup to mutableStateOf(true),
+            MaterialAndSplashGroup to mutableStateOf(true),
+            NavigationGroup to mutableStateOf(true),
+            TypeSafeNavGroup to mutableStateOf(true),
+            RoomDBGroup to mutableStateOf(false),
+            RetrofitGroup to mutableStateOf(false),
+            HiltGroup to mutableStateOf(false),
+            PagingGroup to mutableStateOf(false),
+            CoilGroup to mutableStateOf(false),
+            LoggingGroup to mutableStateOf(false),
+            MultidexConstraintGroup to mutableStateOf(false),
+            LandscapistGroup to mutableStateOf(false),
+            TestGroup to mutableStateOf(true)
+        )
+
+        val scope = rememberCoroutineScope()
         var showVersionBottomSheet by remember { mutableStateOf(false) }
         var selectedPreset by remember { mutableStateOf(androidVersionPresets.first()) }
 
@@ -246,10 +269,29 @@ fun AndroidPlatformApp() {
         var projectNameState by remember { mutableStateOf(projectInfo.name) }
         var projectIdState by remember { mutableStateOf(projectInfo.packageId) }
 
+        val isShowVersions by LocalShowVersions.current
+
+        downloadButtonState.enabled = projectNameState.isNotBlank() && projectIdState.isNotBlank()
+        downloadButtonState.onClick = {
+            scope.launch(Dispatchers.Default) {
+                val zipBytes = generateAndroidZip(
+                    projectInfo.copy(
+                        name = projectNameState,
+                    packageId = projectIdState,
+                    dependencies = androidDeps.mapNotNull { if (it.second.value) it.first else null }
+                        .toSet()))
+                saveZipFile(projectInfo.name, zipBytes)
+            }
+        }
+
+        Spacer(Modifier.size(40.dp))
+        Header(text = "Android Template Wizard", image = Res.drawable.ic_android)
+        Spacer(Modifier.size(20.dp))
+
         OutlinedTextField(
             modifier = Modifier.width(480.dp),
             singleLine = true,
-            value = projectNameState,
+            value = projectNameState, shape = RoundedCornerShape(50),
             onValueChange = { projectNameState = it },
             label = { Text("Project name") }
         )
@@ -258,23 +300,48 @@ fun AndroidPlatformApp() {
         OutlinedTextField(
             modifier = Modifier.width(480.dp),
             singleLine = true,
-            value = projectIdState,
+            value = projectIdState, shape = RoundedCornerShape(50),
             onValueChange = { projectIdState = it },
             label = { Text("Project ID") }
         )
         Spacer(Modifier.size(20.dp))
-        val isShowVersions by LocalShowVersions.current
+
         AnimatedVisibility(isShowVersions) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                OutlinedButton(onClick = { showVersionBottomSheet = true }) {
-                    Text(selectedPreset.name)
-                    Spacer(Modifier.size(10.dp))
-                    Image(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        colorFilter = ColorFilter.tint(getContentColor()),
-                        contentDescription = null
-                    )
-                }
+                SplitButtonLayout(leadingButton = {
+                    SplitButtonDefaults.OutlinedLeadingButton(onClick = {}) {
+                        Icon(
+                            Icons.Filled.Edit,
+                            modifier = Modifier.size(SplitButtonDefaults.LeadingIconSize),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = "Localized description",
+                        )
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(selectedPreset.name)
+                    }
+                }, trailingButton = {
+                    SplitButtonDefaults.TrailingButton(
+                        checked = showVersionBottomSheet,
+                        onCheckedChange = { showVersionBottomSheet = true },
+                        modifier = Modifier.semantics {
+                            stateDescription =
+                                if (showVersionBottomSheet) "Expanded" else "Collapsed"
+                        },
+                    ) {
+                        val rotation: Float by animateFloatAsState(
+                            targetValue = if (showVersionBottomSheet) 180f else 0f,
+                            label = "Trailing Icon Rotation",
+                        )
+                        Icon(
+                            Icons.Filled.KeyboardArrowDown,
+                            modifier = Modifier.size(SplitButtonDefaults.TrailingIconSize)
+                                .graphicsLayer {
+                                    this.rotationZ = rotation
+                                },
+                            contentDescription = "Localized description",
+                        )
+                    }
+                })
                 VersionsTable(projectInfo)
             }
         }
@@ -294,24 +361,6 @@ fun AndroidPlatformApp() {
             )
         }
 
-        val androidDeps = listOf(
-            CoreGroup to mutableStateOf(true),
-            ComposeUIGroup to mutableStateOf(true),
-            MaterialAndSplashGroup to mutableStateOf(true),
-            NavigationGroup to mutableStateOf(true),
-            TypeSafeNavGroup to mutableStateOf(true),
-            RoomDBGroup to mutableStateOf(false),
-            RetrofitGroup to mutableStateOf(false),
-            HiltGroup to mutableStateOf(false),
-            PagingGroup to mutableStateOf(false),
-            CoilGroup to mutableStateOf(false),
-            LoggingGroup to mutableStateOf(false),
-            MultidexConstraintGroup to mutableStateOf(false),
-            LandscapistGroup to mutableStateOf(false),
-            TestGroup to mutableStateOf(true)
-        )
-
-
         SimpleGrid(
             modifier = Modifier,
             columnWidth = 300.dp,
@@ -320,34 +369,8 @@ fun AndroidPlatformApp() {
             val (dep, state) = androidDeps[it]
             DependencyCard(dependency = dep, selected = state)
         }
-        Spacer(Modifier.size(20.dp))
 
-
-        val scope = rememberCoroutineScope()
-        val isReady = projectNameState.isNotBlank() && projectIdState.isNotBlank()
-        Button(
-            enabled = isReady,
-            onClick = {
-                scope.launch(Dispatchers.Default) {
-                    val zipBytes =
-                        generateAndroidZip(
-                            projectInfo.copy(
-                                name = projectNameState,
-                                packageId = projectIdState,
-                                dependencies = androidDeps.mapNotNull { if (it.second.value) it.first else null }
-                                    .toSet()))
-                    saveZipFile(projectInfo.name, zipBytes)
-                }
-            }
-        ) {
-            Image(
-                painter = painterResource(Res.drawable.arrow_circle_down),
-                colorFilter = ColorFilter.tint(getContentColor()),
-                contentDescription = null
-            )
-            Spacer(Modifier.size(10.dp))
-            Text("Download")
-        }
+        Spacer(Modifier.size(100.dp))
     }
 }
 

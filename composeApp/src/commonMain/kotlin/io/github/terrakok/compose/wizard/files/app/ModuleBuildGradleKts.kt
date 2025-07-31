@@ -4,7 +4,7 @@ import io.github.terrakok.compose.wizard.ApolloPlugin
 import io.github.terrakok.compose.wizard.BuildConfigPlugin
 import io.github.terrakok.compose.wizard.ComposePlatform
 import io.github.terrakok.compose.wizard.Dependency
-import io.github.terrakok.compose.wizard.LibresPlugin
+import io.github.terrakok.compose.wizard.KStore
 import io.github.terrakok.compose.wizard.ProjectFile
 import io.github.terrakok.compose.wizard.ProjectInfo
 import io.github.terrakok.compose.wizard.SQLDelightPlugin
@@ -34,11 +34,17 @@ class ModuleBuildGradleKts(info: ProjectInfo) : ProjectFile {
 
         if (info.hasDesktop) {
             appendLine("import org.jetbrains.compose.desktop.application.dsl.TargetFormat")
-            appendLine("")
         }
+        if(info.hasDesktop) {
+            appendLine("import org.jetbrains.kotlin.gradle.dsl.JvmTarget")
+        }
+        appendLine("import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag")
+        appendLine("")
+
         appendLine("plugins {")
         appendLine("    alias(libs.plugins.multiplatform)")
         appendLine("    alias(libs.plugins.compose)")
+        appendLine("    alias(libs.plugins.compose.compiler)")
         if (info.hasIos) {
             appendLine("    alias(libs.plugins.cocoapods)")
         }
@@ -52,17 +58,15 @@ class ModuleBuildGradleKts(info: ProjectInfo) : ProjectFile {
         appendLine("")
         appendLine("kotlin {")
         if (info.hasAndroid) {
-            appendLine("    android {")
-            appendLine("        compilations.all {")
-            appendLine("            kotlinOptions {")
-            appendLine("                jvmTarget = \"1.8\"")
-            appendLine("            }")
+            appendLine("    androidTarget {")
+            appendLine("        compilerOptions {")
+            appendLine("            jvmTarget.set(JvmTarget.JVM_17)")
             appendLine("        }")
             appendLine("    }")
             appendLine("")
         }
         if (info.hasDesktop) {
-            appendLine("    jvm(\"desktop\")")
+            appendLine("    jvm()")
             appendLine("")
         }
         if (info.hasBrowser) {
@@ -73,9 +77,21 @@ class ModuleBuildGradleKts(info: ProjectInfo) : ProjectFile {
             appendLine("")
         }
         if (info.hasIos) {
-            appendLine("    iosX64()")
-            appendLine("    iosArm64()")
-            appendLine("    iosSimulatorArm64()")
+            appendLine(
+                """
+                    listOf(
+                        iosX64(),
+                        iosArm64(),
+                        iosSimulatorArm64()
+                    ).forEach { iosTarget ->
+                        iosTarget.binaries.framework {
+                            baseName = "ComposeApp"
+                            isStatic = true
+                        }
+                    }
+                    applyDefaultHierarchyTemplate()
+            """.trimIndent()
+            )
             appendLine("")
             appendLine("    cocoapods {")
             appendLine("        version = \"1.0.0\"")
@@ -91,42 +107,34 @@ class ModuleBuildGradleKts(info: ProjectInfo) : ProjectFile {
             appendLine("")
         }
         appendLine("    sourceSets {")
-        appendLine("        val commonMain by getting {")
-        appendLine("            dependencies {")
+        appendLine("        commonMain.dependencies {")
         appendLine("                implementation(compose.runtime)")
         appendLine("                implementation(compose.foundation)")
-        appendLine("                implementation(compose.material)")
+        appendLine("                implementation(compose.material3)")
 
         commonDeps.forEach { dep ->
             appendLine("                ${dep.libraryNotation}")
         }
-
-        appendLine("            }")
         appendLine("        }")
         appendLine("")
-        appendLine("        val commonTest by getting {")
-        appendLine("            dependencies {")
-        appendLine("                implementation(kotlin(\"test\"))")
-        appendLine("            }")
+        appendLine("        commonTest.dependencies {")
+        appendLine("//            implementation(libs.kotlin.test)")
         appendLine("        }")
         appendLine("")
         if (info.hasAndroid) {
-            appendLine("        val androidMain by getting {")
-            appendLine("            dependencies {")
-
+            appendLine("        androidMain.dependencies{")
+            appendLine("            implementation(compose.preview)")
+            appendLine("            implementation(libs.androidx.activityCompose)")
             otherDeps.forEach { dep ->
                 if (dep.platforms.contains(ComposePlatform.Android)) {
                     appendLine("                ${dep.libraryNotation}")
                 }
             }
-
-            appendLine("            }")
             appendLine("        }")
             appendLine("")
         }
         if (info.hasDesktop) {
-            appendLine("        val desktopMain by getting {")
-            appendLine("            dependencies {")
+            appendLine("        jvmMain.dependencies {")
             appendLine("                implementation(compose.desktop.common)")
             appendLine("                implementation(compose.desktop.currentOs)")
 
@@ -135,55 +143,20 @@ class ModuleBuildGradleKts(info: ProjectInfo) : ProjectFile {
                     appendLine("                ${dep.libraryNotation}")
                 }
             }
-
-            appendLine("            }")
             appendLine("        }")
             appendLine("")
         }
         if (info.hasBrowser) {
-            appendLine("        val jsMain by getting {")
-            appendLine("            dependencies {")
-            appendLine("                implementation(compose.web.core)")
+            appendLine("        jsMain.dependencies {")
+            appendLine("                implementation(compose.html.core)")
 
             otherDeps.forEach { dep ->
                 if (dep.platforms.contains(ComposePlatform.Browser)) {
                     appendLine("                ${dep.libraryNotation}")
                 }
             }
-
-            appendLine("            }")
             appendLine("        }")
             appendLine("")
-        }
-        if (info.hasIos) {
-            appendLine("        val iosX64Main by getting")
-            appendLine("        val iosArm64Main by getting")
-            appendLine("        val iosSimulatorArm64Main by getting")
-            appendLine("        val iosMain by creating {")
-            appendLine("            dependsOn(commonMain)")
-            appendLine("            iosX64Main.dependsOn(this)")
-            appendLine("            iosArm64Main.dependsOn(this)")
-            appendLine("            iosSimulatorArm64Main.dependsOn(this)")
-            appendLine("            dependencies {")
-
-            otherDeps.forEach { dep ->
-                if (dep.platforms.contains(ComposePlatform.Ios)) {
-                    appendLine("                ${dep.libraryNotation}")
-                }
-            }
-
-            appendLine("            }")
-            appendLine("        }")
-            appendLine("")
-            appendLine("        val iosX64Test by getting")
-            appendLine("        val iosArm64Test by getting")
-            appendLine("        val iosSimulatorArm64Test by getting")
-            appendLine("        val iosTest by creating {")
-            appendLine("            dependsOn(commonTest)")
-            appendLine("            iosX64Test.dependsOn(this)")
-            appendLine("            iosArm64Test.dependsOn(this)")
-            appendLine("            iosSimulatorArm64Test.dependsOn(this)")
-            appendLine("        }")
         }
         appendLine("    }")
         appendLine("}")
@@ -201,20 +174,29 @@ class ModuleBuildGradleKts(info: ProjectInfo) : ProjectFile {
             appendLine("        versionCode = 1")
             appendLine("        versionName = \"1.0.0\"")
             appendLine("    }")
-            appendLine("    sourceSets[\"main\"].apply {")
-            appendLine("        manifest.srcFile(\"src/androidMain/AndroidManifest.xml\")")
-            appendLine("        res.srcDirs(\"src/androidMain/resources\")")
-            appendLine("    }")
             appendLine("    compileOptions {")
             appendLine("        sourceCompatibility = JavaVersion.VERSION_1_8")
             appendLine("        targetCompatibility = JavaVersion.VERSION_1_8")
             appendLine("    }")
-            appendLine("    packagingOptions {")
-            appendLine("        resources.excludes.add(\"META-INF/**\")")
+            appendLine("    buildTypes {")
+            appendLine("        getByName(\"release\") {")
+            appendLine("            isMinifyEnabled = false")
+            appendLine("        }")
+            appendLine("    }")
+            appendLine("    packaging {")
+            appendLine("        resources {")
+            appendLine("            excludes += \"/META-INF/{AL2.0,LGPL2.1}\"")
+            appendLine("        }")
             appendLine("    }")
             appendLine("}")
             appendLine("")
         }
+        appendLine("")
+        appendLine("dependencies {")
+        appendLine("    debugImplementation(compose.uiTooling)")
+        appendLine("}")
+        appendLine("")
+
         if (info.hasDesktop) {
             appendLine("compose.desktop {")
             appendLine("    application {")
@@ -224,33 +206,33 @@ class ModuleBuildGradleKts(info: ProjectInfo) : ProjectFile {
             appendLine("            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)")
             appendLine("            packageName = \"${info.packageId}.desktopApp\"")
             appendLine("            packageVersion = \"1.0.0\"")
+            appendLine("            description = \"Compose Multiplatform App\"")
+            appendLine("            copyright = \"© 2024 My Name. All rights reserved.\"")
+            appendLine("            windows{")
+            appendLine("                shortcut = true")
+            appendLine("                dirChooser = true")
+            appendLine("            }")
+            appendLine("            modules(")
+            if (info.dependencies.contains(SQLDelightPlugin)) {
+                appendLine("                \"java.sql\",")
+            }
+            if (info.dependencies.contains(KStore)) {
+                appendLine("                \"java.prefs\",")
+            }
+            appendLine("                \"java.net.http\",")
+            appendLine("                \"java.management\",")
+            appendLine("                \"jdk.unsupported\",")
+            appendLine("                \"java.instrument\",")
+            appendLine("                \"jdk.security.auth\",")
+            appendLine("            )")
+            appendLine("        }")
+            appendLine("        buildTypes.release.proguard {")
+            appendLine("            obfuscate.set(false)")
+            appendLine("            configurationFiles.from(project.file(\"assemble/proguard-rules.pro\"))")
             appendLine("        }")
             appendLine("    }")
             appendLine("}")
         }
-
-        if (info.hasBrowser) {
-            appendLine("")
-            appendLine("compose.experimental {")
-            appendLine("    web.application {}")
-            appendLine("}")
-        }
-
-        if (plugins.contains(LibresPlugin)) {
-            appendLine("")
-            appendLine("libres {")
-            appendLine("    // https://github.com/Skeptick/libres#setup")
-            appendLine("}")
-
-            if (info.hasDesktop) {
-                appendLine("tasks.getByPath(\"desktopProcessResources\").dependsOn(\"libresGenerateResources\")")
-                appendLine("tasks.getByPath(\"desktopSourcesJar\").dependsOn(\"libresGenerateResources\")")
-            }
-            if (info.hasBrowser) {
-                appendLine("tasks.getByPath(\"jsProcessResources\").dependsOn(\"libresGenerateResources\")")
-            }
-        }
-
         if (plugins.contains(BuildConfigPlugin)) {
             appendLine("")
             appendLine("buildConfig {")
@@ -258,6 +240,10 @@ class ModuleBuildGradleKts(info: ProjectInfo) : ProjectFile {
             appendLine("  // https://github.com/gmazzo/gradle-buildconfig-plugin#usage-in-kts")
             appendLine("}")
         }
+
+        appendLine("composeCompiler {")
+        appendLine("    featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)")
+        appendLine("}")
 
         if (plugins.contains(SQLDelightPlugin)) {
             appendLine("")

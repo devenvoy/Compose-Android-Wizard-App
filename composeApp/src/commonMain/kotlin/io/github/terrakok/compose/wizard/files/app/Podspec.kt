@@ -1,6 +1,5 @@
 package io.github.terrakok.compose.wizard.files.app
 
-import io.github.terrakok.compose.wizard.LibresPlugin
 import io.github.terrakok.compose.wizard.ProjectFile
 import io.github.terrakok.compose.wizard.ProjectInfo
 
@@ -46,13 +45,6 @@ class Podspec(info: ProjectInfo) : ProjectFile {
                     }
                 ]
         """.trimIndent())
-        if (info.dependencies.contains(LibresPlugin)) {
-            appendLine("""
-                |    spec.resource_bundles = {
-                |        'LibresComposeApp' => ['build/generated/libres/apple/resources/images/LibresComposeApp.xcassets']
-                |    }
-            """.trimMargin())
-        }
 
         appendLine("end")
     }

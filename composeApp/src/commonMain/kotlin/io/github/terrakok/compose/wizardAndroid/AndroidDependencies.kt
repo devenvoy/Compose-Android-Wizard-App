@@ -469,13 +469,25 @@ val navigationDependency = AndroidDependency(
 
 val serializationDependency = AndroidDependency(
     title = "Kotlinx Serialization JSON",
-    description = "Kotlinx JSON serialization",
+    description = "Kotlin serialization consists of a compiler plugin.",
     url = "https://github.com/Kotlin/kotlinx.serialization",
     catalogName = "kotlinx-serialization",
     catalogVersionName = "kotlinSerialization",
     version = "1.7.3",
     group = "org.jetbrains.kotlinx",
     id = "kotlinx-serialization-json"
+)
+
+val serializationPlugin = AndroidDependency(
+    title = "Kotlinx Serialization",
+    description = "Kotlin serialization consists of a compiler plugin.",
+    url = "https://github.com/Kotlin/kotlinx.serialization",
+    catalogName = "kotlinx-serialization",
+    catalogVersionName = "kotlinSerialization",
+    version = "1.7.3",
+    group = "org.jetbrains.kotlinx",
+    id = "kotlinx-serialization",
+    isPlugin = true
 )
 
 val CoilComposeDependency = AndroidDependency(
@@ -547,12 +559,12 @@ val MultidexConstraintGroup = GroupedAndroidDependency(
 
 val NavigationGroup = GroupedAndroidDependency(
     title = "Navigation",
-    items = listOf(navigationCompose, navigationRuntimeKtx)
+    items = listOf(navigationCompose, navigationDependency, navigationRuntimeKtx)
 )
 
 val TypeSafeNavGroup = GroupedAndroidDependency(
-    title = "Navigation (type-safe) & Serialization",
-    items = listOf(navigationDependency, serializationDependency)
+    title = "Kotlinx Serialization",
+    items = listOf(serializationDependency, serializationPlugin)
 )
 
 val PagingGroup = GroupedAndroidDependency(

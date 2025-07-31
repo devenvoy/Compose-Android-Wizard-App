@@ -66,5 +66,4 @@ fun VersionsTable(info: AndroidProjectInfo) {
             }
         }
     }
-    Spacer(Modifier.size(20.dp))
 }

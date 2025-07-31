@@ -13,11 +13,11 @@ class AppKt(info: ProjectInfo) : ProjectFile {
         import androidx.compose.foundation.layout.fillMaxSize
         import androidx.compose.foundation.layout.fillMaxWidth
         import androidx.compose.foundation.layout.padding
-        import androidx.compose.material.Button
-        import androidx.compose.material.MaterialTheme
-        import androidx.compose.material.OutlinedTextField
-        import androidx.compose.material.Text
-        import androidx.compose.material.TextButton
+        import androidx.compose.material3.Button
+        import androidx.compose.material3.MaterialTheme
+        import androidx.compose.material3.OutlinedTextField
+        import androidx.compose.material3.Text
+        import androidx.compose.material3.TextButton
         import androidx.compose.runtime.Composable
         import androidx.compose.runtime.getValue
         import androidx.compose.runtime.mutableStateOf
@@ -35,7 +35,7 @@ class AppKt(info: ProjectInfo) : ProjectFile {
 
                 Text(
                     text = "Login",
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(16.dp)
                 )
 
@@ -58,13 +58,6 @@ class AppKt(info: ProjectInfo) : ProjectFile {
                     modifier = Modifier.fillMaxWidth().padding(16.dp)
                 ) {
                     Text("Login")
-                }
-
-                TextButton(
-                    onClick = { openUrl("https://github.com/terrakok") },
-                    modifier = Modifier.fillMaxWidth().padding(16.dp)
-                ) {
-                    Text("Open github")
                 }
             }
         }
@@ -116,7 +109,7 @@ class AndroidAppKt(info: ProjectInfo) : ProjectFile {
 }
 
 class DesktopAppKt(info: ProjectInfo) : ProjectFile {
-    override val path = "composeApp/src/desktopMain/kotlin/${info.packagePath}/App.jvm.kt"
+    override val path = "composeApp/src/jvmMain/kotlin/${info.packagePath}/App.jvm.kt"
     override val content = """
         package ${info.packageId}
 

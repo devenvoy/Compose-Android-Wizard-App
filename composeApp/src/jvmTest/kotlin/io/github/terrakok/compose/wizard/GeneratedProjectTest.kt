@@ -17,8 +17,6 @@ internal val allDependencies = setOf(
     ApolloPlugin,
     ApolloRuntime,
     ComposeUiTooling,
-    LibresPlugin,
-    LibresCompose,
     Voyager,
     ImageLoader,
     Napier,
