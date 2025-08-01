@@ -129,13 +129,30 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "io.github.terrakok.compose.desktopApp"
+            packageName = "Compose Wizard"
             packageVersion = "1.0.0"
             description = "Compose Multiplatform App"
             copyright = "© 2024 My Name. All rights reserved."
+            vendor = "Devansh corp."
             windows{
                 shortcut = true
                 dirChooser = true
+                perUserInstall = false
+                menuGroup = "Compose"
+                iconFile.set(project.file("src/jvmMain/resources/compose_logo.svg"))
+            }
+            macOS {
+                bundleID = "io.github.terrakok.compose.desktopApp"
+                dockName = "Compose Wizard"
+                iconFile.set(project.file("src/jvmMain/resources/compose_logo.svg"))
+            }
+
+            linux {
+                debMaintainer = "devanshamdavadwala@hotmail.com"
+                shortcut = true
+                menuGroup = "Compose Wizard"
+                appRelease = "stable"
+                iconFile.set(project.file("src/jvmMain/resources/compose_logo.svg"))
             }
             modules(
                 "java.sql",
@@ -149,7 +166,8 @@ compose.desktop {
         }
         buildTypes.release.proguard {
             obfuscate.set(false)
-            configurationFiles.from(project.file("assemble/proguard-rules.pro"))
+//            obfuscate.set(true)
+//            configurationFiles.from(project.file("proguard-rules.pro"))
         }
     }
 }
